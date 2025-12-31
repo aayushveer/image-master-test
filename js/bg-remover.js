@@ -289,10 +289,24 @@
     }
 
     function setupCompareView() {
-        el.compareAfterCanvas.width = state.resultCanvas.width;
-        el.compareAfterCanvas.height = state.resultCanvas.height;
-        const ctx = el.compareAfterCanvas.getContext('2d');
-        ctx.drawImage(state.resultCanvas, 0, 0);
+        // Set before image from original
+        if (state.originalCanvas) {
+            el.compareBeforeImg.src = state.originalCanvas.toDataURL('image/png');
+        } else if (state.image) {
+            el.compareBeforeImg.src = state.image.src;
+        }
+        
+        // Set after canvas from result
+        if (state.resultCanvas) {
+            el.compareAfterCanvas.width = state.resultCanvas.width;
+            el.compareAfterCanvas.height = state.resultCanvas.height;
+            const ctx = el.compareAfterCanvas.getContext('2d');
+            ctx.drawImage(state.resultCanvas, 0, 0);
+        }
+        
+        // Reset slider position to middle
+        el.compareHandle.style.left = '50%';
+        el.compareAfter.style.clipPath = 'inset(0 50% 0 0)';
     }
 
     // Zoom

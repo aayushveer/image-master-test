@@ -417,6 +417,7 @@
                 <div class="section__header">
                     <h2 class="section__title">🐛 Bug Reports</h2>
                     <div>
+                        <button class="refresh-btn" onclick="addTestBug()" style="background: rgba(34, 197, 94, 0.1); color: #22c55e; border-color: #22c55e;">+ Test</button>
                         <button class="refresh-btn" onclick="refreshData()">↻ Refresh</button>
                         <button class="clear-btn" onclick="clearBugs()">Clear All</button>
                     </div>
@@ -539,7 +540,10 @@
         
         function loadBugReports() {
             try {
-                const reports = JSON.parse(localStorage.getItem('bug_reports') || '[]');
+                const rawData = localStorage.getItem('bug_reports');
+                console.log('Raw bug_reports from localStorage:', rawData);
+                const reports = JSON.parse(rawData || '[]');
+                console.log('Parsed reports:', reports);
                 document.getElementById('stat-bugs').textContent = reports.filter(r => r.status !== 'resolved').length;
                 
                 if (reports.length === 0) {
@@ -591,6 +595,26 @@
             if (!confirm('Delete ALL bug reports?')) return;
             localStorage.removeItem('bug_reports');
             refreshData();
+        }
+        
+        function addTestBug() {
+            const testReport = {
+                id: Date.now(),
+                tool: 'Test Tool',
+                description: 'This is a test bug report to verify the system is working correctly.',
+                image: null,
+                page: '/test',
+                userAgent: navigator.userAgent,
+                screenSize: window.innerWidth + 'x' + window.innerHeight,
+                timestamp: new Date().toISOString(),
+                status: 'new'
+            };
+            
+            let reports = JSON.parse(localStorage.getItem('bug_reports') || '[]');
+            reports.unshift(testReport);
+            localStorage.setItem('bug_reports', JSON.stringify(reports));
+            refreshData();
+            alert('Test bug report added!');
         }
         
         function formatTime(isoString) {
