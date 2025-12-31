@@ -1,6 +1,6 @@
 /**
- * BUG-REPORT.JS - Bug Report Button
- * Opens Google Form for bug reports
+ * BUG-REPORT.JS - Bug Report Button with Popup
+ * Opens Google Form in a popup modal
  */
 
 'use strict';
@@ -12,33 +12,7 @@ const BugReport = {
     init() {
         this.injectStyles();
         this.injectButton();
-    },
-    
-    getToolName() {
-        const page = window.location.pathname.split('/').pop() || 'index.html';
-        const toolNames = {
-            'index.html': 'Home Page',
-            'image-resize.html': 'Image Resize',
-            'image-compress.html': 'Image Compress',
-            'image-crop.html': 'Image Crop',
-            'image-reducer.html': 'Image Reducer',
-            'image-to-pdf.html': 'Image to PDF',
-            'pdf-to-image.html': 'PDF to Image',
-            'background-remover.html': 'Background Remover',
-            'passport-photo.html': 'Passport Photo',
-            'photo-collage.html': 'Photo Collage',
-            'add-watermark.html': 'Add Watermark',
-            'screenshot-beautifier.html': 'Screenshot Beautifier',
-            'format-converter.html': 'Format Converter',
-            'dp-resizer.html': 'DP Resizer',
-            'bulk-rename.html': 'Bulk Rename',
-            'favicon-converter.html': 'Favicon Converter',
-            'logo-to-png.html': 'Logo to PNG',
-            'color-palette.html': 'Color Palette',
-            'whatsapp-chat-to-pdf.html': 'WhatsApp to PDF',
-            'image-size-increaser.html': 'Image Size Increaser'
-        };
-        return toolNames[page] || page.replace('.html', '').replace(/-/g, ' ');
+        this.injectModal();
     },
     
     injectStyles() {
@@ -79,11 +53,102 @@ const BugReport = {
             
             @media (max-width: 600px) {
                 .bug-report-btn {
-                    padding: 12px;
+                    padding: 14px;
                     border-radius: 50%;
                 }
                 .bug-report-btn span {
                     display: none;
+                }
+            }
+            
+            /* Modal Popup */
+            .bug-modal-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            .bug-modal-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .bug-modal-content {
+                width: 100%;
+                max-width: 500px;
+                max-height: 90vh;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+                transform: scale(0.9) translateY(20px);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .bug-modal-overlay.active .bug-modal-content {
+                transform: scale(1) translateY(0);
+            }
+            
+            .bug-modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+                color: white;
+            }
+            .bug-modal-header h3 {
+                font-size: 16px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .bug-modal-close {
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                border-radius: 50%;
+                font-size: 20px;
+                color: white;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .bug-modal-close:hover {
+                background: rgba(255,255,255,0.3);
+                transform: rotate(90deg);
+            }
+            
+            .bug-modal-body {
+                height: 500px;
+                max-height: calc(90vh - 60px);
+            }
+            .bug-modal-body iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+            
+            @media (max-width: 600px) {
+                .bug-modal-content {
+                    max-width: 100%;
+                    max-height: 85vh;
+                    border-radius: 12px;
+                }
+                .bug-modal-body {
+                    height: 400px;
+                    max-height: calc(85vh - 60px);
                 }
             }
         `;
@@ -93,17 +158,9 @@ const BugReport = {
     injectButton() {
         if (document.getElementById('bug-report-btn')) return;
         
-        const toolName = this.getToolName();
-        
-        // Pre-fill tool name in Google Form URL
-        const formUrl = `${this.FORM_URL}?entry.1234567890=${encodeURIComponent(toolName)}`;
-        
-        const btn = document.createElement('a');
+        const btn = document.createElement('button');
         btn.id = 'bug-report-btn';
         btn.className = 'bug-report-btn';
-        btn.href = this.FORM_URL;
-        btn.target = '_blank';
-        btn.rel = 'noopener noreferrer';
         btn.title = 'Report a Bug';
         btn.innerHTML = `
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -122,7 +179,67 @@ const BugReport = {
             <span>Report Bug</span>
         `;
         
+        btn.addEventListener('click', () => this.openModal());
         document.body.appendChild(btn);
+    },
+    
+    injectModal() {
+        if (document.getElementById('bug-modal-overlay')) return;
+        
+        const modal = document.createElement('div');
+        modal.id = 'bug-modal-overlay';
+        modal.className = 'bug-modal-overlay';
+        modal.innerHTML = `
+            <div class="bug-modal-content">
+                <div class="bug-modal-header">
+                    <h3>🐛 Report a Bug</h3>
+                    <button class="bug-modal-close" id="bug-modal-close">&times;</button>
+                </div>
+                <div class="bug-modal-body">
+                    <iframe src="" id="bug-form-iframe" title="Bug Report Form"></iframe>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close button
+        document.getElementById('bug-modal-close').addEventListener('click', () => this.closeModal());
+        
+        // Click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) this.closeModal();
+        });
+        
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') this.closeModal();
+        });
+    },
+    
+    openModal() {
+        const modal = document.getElementById('bug-modal-overlay');
+        const iframe = document.getElementById('bug-form-iframe');
+        
+        // Load form in iframe
+        iframe.src = this.FORM_URL + '?embedded=true';
+        
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    },
+    
+    closeModal() {
+        const modal = document.getElementById('bug-modal-overlay');
+        const iframe = document.getElementById('bug-form-iframe');
+        
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Clear iframe after animation
+        setTimeout(() => {
+            iframe.src = '';
+        }, 300);
     }
 };
 
