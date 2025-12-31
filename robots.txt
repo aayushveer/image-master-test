@@ -1,0 +1,30 @@
+# Image Master Robots.txt
+# https://imagemaster.com
+# Last Updated: 2025-01-01
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://imagemaster.com/sitemap.xml
+
+# Block admin pages
+Disallow: /admin-panel.html
+
+# Block any potential sensitive files
+Disallow: /*.json$
+Disallow: /js/bug-report.js
+
+# Googlebot specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bingbot specific  
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

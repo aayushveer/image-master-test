@@ -1,0 +1,682 @@
+/**
+ * ANIMATIONS.CSS - Premium Micro-Interactions
+ * Ultra-lightweight, GPU-accelerated animations
+ * By Image Master - World-class UX
+ */
+
+/* ============================================
+   CSS Variables for Animation Control
+   ============================================ */
+:root {
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    --duration-fast: 0.15s;
+    --duration-normal: 0.3s;
+    --duration-slow: 0.5s;
+    --duration-slower: 0.8s;
+}
+
+/* ============================================
+   Page Load Animations
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   Loading & Processing Animations
+   ============================================ */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes progressGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(74, 144, 217, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(74, 144, 217, 0.8);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ============================================
+   Success Animations
+   ============================================ */
+@keyframes checkmark {
+    0% {
+        stroke-dashoffset: 100;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes celebrate {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    75% {
+        transform: scale(1.05) rotate(-1deg);
+    }
+    100% {
+        transform: scale(1) rotate(0);
+    }
+}
+
+/* ============================================
+   Apply to Common Elements
+   ============================================ */
+
+/* Header Animation */
+.header {
+    animation: fadeIn var(--duration-normal) var(--ease-out-expo);
+}
+
+/* Logo Hover */
+.logo {
+    transition: transform var(--duration-normal) var(--ease-out-back);
+}
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* Back Button */
+.back-btn {
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+.back-btn:hover {
+    transform: translateX(-4px);
+    color: var(--primary, #4a90d9);
+}
+
+/* Main Content Fade In */
+main, .container {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo);
+}
+
+/* Page Transitions */
+.page {
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.page:not(.active) {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+.page.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================
+   Card Animations (Staggered)
+   ============================================ */
+.tool-card, .img-card, .result-item, .layout-btn, .preset, .format-btn {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo) backwards;
+    transition: transform var(--duration-normal) var(--ease-out-back),
+                box-shadow var(--duration-normal) ease;
+}
+
+/* Stagger delays */
+.tool-card:nth-child(1), .img-card:nth-child(1), .result-item:nth-child(1) { animation-delay: 0.05s; }
+.tool-card:nth-child(2), .img-card:nth-child(2), .result-item:nth-child(2) { animation-delay: 0.1s; }
+.tool-card:nth-child(3), .img-card:nth-child(3), .result-item:nth-child(3) { animation-delay: 0.15s; }
+.tool-card:nth-child(4), .img-card:nth-child(4), .result-item:nth-child(4) { animation-delay: 0.2s; }
+.tool-card:nth-child(5), .img-card:nth-child(5), .result-item:nth-child(5) { animation-delay: 0.25s; }
+.tool-card:nth-child(6), .img-card:nth-child(6), .result-item:nth-child(6) { animation-delay: 0.3s; }
+.tool-card:nth-child(7), .img-card:nth-child(7) { animation-delay: 0.35s; }
+.tool-card:nth-child(8), .img-card:nth-child(8) { animation-delay: 0.4s; }
+.tool-card:nth-child(9), .img-card:nth-child(9) { animation-delay: 0.45s; }
+.tool-card:nth-child(10), .img-card:nth-child(10) { animation-delay: 0.5s; }
+
+/* Card Hover Effects */
+.tool-card:hover, .img-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.result-item {
+    transition: transform var(--duration-normal) var(--ease-out-expo),
+                background var(--duration-fast) ease;
+}
+.result-item:hover {
+    transform: translateX(8px);
+    background: rgba(74, 144, 217, 0.05);
+}
+
+/* ============================================
+   Button Animations
+   ============================================ */
+button, .btn, [class*="btn-"] {
+    position: relative;
+    overflow: hidden;
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+/* Ripple Effect Base */
+button::after, .btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.8s;
+}
+
+button:active::after, .btn:active::after {
+    transform: scale(0, 0);
+    opacity: 0.3;
+    transition: 0s;
+}
+
+/* Primary Button Hover */
+.btn--primary, .btn-primary, [class*="btn-download"], [class*="btn-convert"], [class*="btn-resize"], [class*="btn-compress"], [class*="btn-crop"], [class*="btn-apply"], [class*="btn-create"], [class*="btn-generate"], [class*="btn-process"], [class*="btn-reduce"], [class*="btn-increase"] {
+    transition: all var(--duration-normal) var(--ease-out-back);
+}
+
+.btn--primary:hover, .btn-primary:hover, [class*="btn-download"]:hover, [class*="btn-convert"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 144, 217, 0.35);
+}
+
+.btn--primary:active, .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Secondary Button Hover */
+.btn--secondary:hover, .btn-secondary:hover, .btn-more:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Button Animation */
+.icon-btn, [class*="btn-zoom"], [class*="btn-rotate"], [class*="btn-flip"] {
+    transition: all var(--duration-fast) var(--ease-out-back);
+}
+.icon-btn:hover, [class*="btn-zoom"]:hover, [class*="btn-rotate"]:hover, [class*="btn-flip"]:hover {
+    transform: scale(1.15);
+}
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+/* Disabled State */
+button:disabled, .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ============================================
+   Dropzone Animations
+   ============================================ */
+.dropzone, .upload-area, [class*="drop"] {
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.dropzone:hover, .upload-area:hover {
+    transform: scale(1.01);
+    border-color: var(--primary, #4a90d9);
+    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.1);
+}
+
+.dropzone.dragover, .upload-area.dragover, .drag-over {
+    transform: scale(1.02);
+    border-color: var(--primary, #4a90d9);
+    background: rgba(74, 144, 217, 0.05);
+    box-shadow: 0 0 0 6px rgba(74, 144, 217, 0.15);
+}
+
+/* Upload Icon Animation */
+.dropzone svg, .upload-area svg {
+    transition: transform var(--duration-normal) var(--ease-out-back);
+}
+.dropzone:hover svg, .upload-area:hover svg {
+    transform: translateY(-5px) scale(1.1);
+}
+
+/* ============================================
+   Input & Slider Animations
+   ============================================ */
+input[type="text"], input[type="number"], textarea, select {
+    transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15);
+}
+
+/* Range Slider Thumb */
+input[type="range"]::-webkit-slider-thumb {
+    transition: all var(--duration-fast) var(--ease-out-back);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(74, 144, 217, 0.5);
+}
+input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   Modal Animations
+   ============================================ */
+.modal, [class*="modal"] {
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                visibility var(--duration-normal);
+}
+
+.modal__content, [class*="modal__content"], [class*="modal-content"] {
+    transition: transform var(--duration-normal) var(--ease-out-back),
+                opacity var(--duration-normal) var(--ease-out-expo);
+}
+
+.modal:not(.active) .modal__content,
+[class*="modal"]:not(.active) [class*="modal__content"] {
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+}
+
+.modal.active .modal__content,
+[class*="modal"].active [class*="modal__content"] {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* ============================================
+   Processing Overlay Animations
+   ============================================ */
+.processing, [class*="processing"] {
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                visibility var(--duration-normal);
+}
+
+.processing.active {
+    animation: fadeIn var(--duration-fast) var(--ease-out-expo);
+}
+
+/* Progress Bar Glow */
+.progress-bar, [class*="progress-bar"], [class*="progressBar"] {
+    transition: width var(--duration-fast) var(--ease-out-expo);
+    animation: progressGlow 2s ease-in-out infinite;
+}
+
+/* Spinner */
+.spinner, [class*="spinner"] {
+    animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   Image Preview Animations
+   ============================================ */
+.preview-img, .result-thumb, [class*="preview"] img, [class*="result"] img {
+    transition: transform var(--duration-normal) var(--ease-out-expo),
+                opacity var(--duration-normal) ease;
+}
+
+.preview-img:hover, .result-thumb:hover {
+    transform: scale(1.05);
+}
+
+/* Image Load Animation */
+img[src] {
+    animation: fadeIn var(--duration-normal) var(--ease-out-expo);
+}
+
+/* ============================================
+   Tab & Toggle Animations
+   ============================================ */
+.tab, [class*="tab-"], [class*="-tab"], .mode, .preset, .format-btn, .platform-btn, .bg-btn, .orient-btn, .size-btn, .margin-btn, .fit-btn, .ratio-btn, .frame-btn, .subject-btn, .print-btn, .color-btn, .layout-btn {
+    transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+.tab:hover, [class*="tab-"]:hover, .mode:hover, .preset:hover, .format-btn:hover, .platform-btn:hover, .bg-btn:hover {
+    transform: translateY(-2px);
+}
+
+.tab.active, [class*="tab-"].active, .mode.active, .preset.active, .format-btn.active, .platform-btn.active, .bg-btn.active, .orient-btn.active, .size-btn.active, .margin-btn.active, .fit-btn.active, .ratio-btn.active, .frame-btn.active, .subject-btn.active, .print-btn.active {
+    animation: bounceIn var(--duration-normal) var(--ease-spring);
+}
+
+/* ============================================
+   Settings Panel Animations
+   ============================================ */
+.settings, .controls, [class*="settings"], [class*="controls"], .sidebar {
+    animation: slideInRight var(--duration-slow) var(--ease-out-expo);
+}
+
+.settings-group, .control-group, [class*="group"] {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo) backwards;
+}
+.settings-group:nth-child(1) { animation-delay: 0.1s; }
+.settings-group:nth-child(2) { animation-delay: 0.15s; }
+.settings-group:nth-child(3) { animation-delay: 0.2s; }
+.settings-group:nth-child(4) { animation-delay: 0.25s; }
+.settings-group:nth-child(5) { animation-delay: 0.3s; }
+
+/* ============================================
+   Download Section Animations
+   ============================================ */
+.download-section, [class*="download"] {
+    animation: scaleIn var(--duration-slow) var(--ease-out-back);
+}
+
+/* Success Checkmark */
+.success-icon, [class*="success"] svg {
+    animation: bounceIn var(--duration-slow) var(--ease-spring);
+}
+
+/* ============================================
+   Share Buttons Animations
+   ============================================ */
+.share-btn, [class*="share"] button, [class*="share"] a {
+    transition: all var(--duration-fast) var(--ease-out-back);
+}
+
+.share-btn:hover, [class*="share"] button:hover, [class*="share"] a:hover {
+    transform: translateY(-3px) scale(1.1);
+}
+
+/* Stagger share buttons */
+.share-btn:nth-child(1) { animation-delay: 0.1s; }
+.share-btn:nth-child(2) { animation-delay: 0.15s; }
+.share-btn:nth-child(3) { animation-delay: 0.2s; }
+.share-btn:nth-child(4) { animation-delay: 0.25s; }
+
+/* ============================================
+   Footer Animations
+   ============================================ */
+footer, .footer {
+    animation: fadeIn var(--duration-slower) var(--ease-out-expo) 0.3s backwards;
+}
+
+footer a, .footer a {
+    transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+footer a:hover, .footer a:hover {
+    color: var(--primary, #4a90d9);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   Hero Section (Home Page)
+   ============================================ */
+.hero {
+    animation: fadeIn var(--duration-slower) var(--ease-out-expo);
+}
+
+.hero h1, .hero__title {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo) 0.1s backwards;
+}
+
+.hero p, .hero__subtitle {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo) 0.2s backwards;
+}
+
+.hero .btn, .hero button, .hero__cta {
+    animation: fadeInUp var(--duration-slow) var(--ease-out-expo) 0.3s backwards;
+}
+
+/* ============================================
+   Privacy Badge Animation
+   ============================================ */
+.privacy, [class*="privacy"], .trust-badge {
+    animation: fadeIn var(--duration-slow) var(--ease-out-expo) 0.4s backwards;
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.privacy:hover, [class*="privacy"]:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.15);
+}
+
+/* ============================================
+   Bug Report Button Animation
+   ============================================ */
+.bug-report-btn {
+    animation: fadeIn var(--duration-slow) var(--ease-out-expo) 0.5s backwards;
+    transition: all var(--duration-normal) var(--ease-out-back) !important;
+}
+
+.bug-report-btn:hover {
+    transform: scale(1.15) !important;
+}
+
+.bug-report-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* ============================================
+   Tooltip & Popover Animations
+   ============================================ */
+[data-tooltip], .tooltip {
+    position: relative;
+}
+
+[data-tooltip]::before, .tooltip::before {
+    transition: all var(--duration-fast) var(--ease-out-back);
+    transform: translateY(5px);
+    opacity: 0;
+}
+
+[data-tooltip]:hover::before, .tooltip:hover::before {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ============================================
+   Scroll-based Reveal (Optional JS Hook)
+   ============================================ */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all var(--duration-slow) var(--ease-out-expo);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================
+   Reduced Motion (Accessibility)
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================
+   Premium Shadows (Depth)
+   ============================================ */
+.elevated-1 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow var(--duration-normal) var(--ease-out-expo);
+}
+.elevated-1:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.elevated-2 {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: box-shadow var(--duration-normal) var(--ease-out-expo);
+}
+.elevated-2:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.elevated-3 {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transition: box-shadow var(--duration-normal) var(--ease-out-expo);
+}
+.elevated-3:hover {
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.18);
+}
+
+/* ============================================
+   Glassmorphism Effect (Premium)
+   ============================================ */
+.glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   Gradient Text Animation
+   ============================================ */
+.gradient-text {
+    background: linear-gradient(135deg, #4a90d9 0%, #667eea 50%, #764ba2 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* ============================================
+   Skeleton Loading
+   ============================================ */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* ============================================
+   Notification/Toast Animation
+   ============================================ */
+.toast, .notification {
+    animation: slideInRight var(--duration-normal) var(--ease-out-back);
+}
+
+.toast.hide, .notification.hide {
+    animation: fadeOut var(--duration-fast) var(--ease-out-expo) forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+}
+
