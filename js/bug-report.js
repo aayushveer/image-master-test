@@ -1,12 +1,24 @@
 /**
  * BUG-REPORT.JS - Advanced Bug Report System
  * Auto-detects tool name, captures context
+ * Supports: Discord Webhook, Telegram Bot, or Local Storage
  */
 
 'use strict';
 
 const BugReport = {
     reports: [],
+    
+    // ⚠️ PASTE YOUR WEBHOOK URL HERE ⚠️
+    // Discord: Server Settings > Integrations > Webhooks > New Webhook > Copy URL
+    // Format: https://discord.com/api/webhooks/XXXXX/YYYYY
+    DISCORD_WEBHOOK: '',
+    
+    // OR Telegram Bot (optional)
+    // 1. Message @BotFather on Telegram, create bot, get token
+    // 2. Message your bot, then visit: https://api.telegram.org/bot<TOKEN>/getUpdates to get chat_id
+    TELEGRAM_BOT_TOKEN: '',
+    TELEGRAM_CHAT_ID: '',
     
     init() {
         this.injectStyles();
@@ -417,8 +429,66 @@ const BugReport = {
             status: 'new'
         };
         
+        // Save locally
         this.saveReport(report);
+        
+        // Send to Discord/Telegram (live notification)
+        await this.sendToWebhook(report);
+        
         this.showSuccess();
+    },
+    
+    async sendToWebhook(report) {
+        // Try Discord first
+        if (this.DISCORD_WEBHOOK) {
+            try {
+                const embed = {
+                    title: `🐛 Bug Report: ${report.tool}`,
+                    description: report.description,
+                    color: 0xff6b6b,
+                    fields: [
+                        { name: '📄 Page', value: report.page, inline: true },
+                        { name: '📱 Screen', value: report.screenSize, inline: true },
+                        { name: '🕐 Time', value: new Date(report.timestamp).toLocaleString(), inline: true }
+                    ],
+                    footer: { text: 'Image Master Bug Report' }
+                };
+                
+                await fetch(this.DISCORD_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+                console.log('Bug sent to Discord');
+            } catch (e) {
+                console.warn('Discord webhook failed:', e);
+            }
+        }
+        
+        // Try Telegram
+        if (this.TELEGRAM_BOT_TOKEN && this.TELEGRAM_CHAT_ID) {
+            try {
+                const text = `🐛 *Bug Report*\n\n` +
+                    `*Tool:* ${report.tool}\n` +
+                    `*Description:* ${report.description}\n` +
+                    `*Page:* ${report.page}\n` +
+                    `*Screen:* ${report.screenSize}\n` +
+                    `*Time:* ${new Date(report.timestamp).toLocaleString()}`;
+                
+                await fetch(`https://api.telegram.org/bot${this.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: this.TELEGRAM_CHAT_ID,
+                        text: text,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                console.log('Bug sent to Telegram');
+            } catch (e) {
+                console.warn('Telegram send failed:', e);
+            }
+        }
     },
     
     fileToBase64(file) {
