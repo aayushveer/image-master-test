@@ -174,19 +174,29 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
     
     <style>
+        /* Font fallback to prevent CLS during font loading */
+        @font-face {
+            font-family: 'Inter-fallback';
+            src: local('Arial');
+            ascent-override: 90%;
+            descent-override: 22%;
+            line-gap-override: 0%;
+            size-adjust: 107%;
+        }
+        
         :root {
             --bg: #ffffff;
             --bg-light: #f8f9fa;
             --bg-card: #ffffff;
             --text: #1a1a1a;
             --text-secondary: #555555;
-            --text-muted: #888888;
+            --text-muted: #666666;
             --primary: #4a90d9;
             --primary-hover: #3a7bc8;
             --primary-light: rgba(74, 144, 217, 0.1);
             --success: #22c55e;
             --border: #e5e5e5;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font: 'Inter', 'Inter-fallback', -apple-system, BlinkMacSystemFont, sans-serif;
             --radius: 8px;
             --radius-lg: 12px;
             --shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -208,6 +218,23 @@
         a { color: inherit; text-decoration: none; }
         img, svg { display: block; max-width: 100%; }
         button { font: inherit; cursor: pointer; border: none; background: none; }
+        
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            z-index: 1000;
+            font-weight: 600;
+            border-radius: 0 0 var(--radius) 0;
+            transition: top 0.3s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
 
         .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 20px; }
 
@@ -230,11 +257,13 @@
         .nav__link { padding: 10px 18px; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-radius: 6px; transition: all 0.2s; }
         .nav__link:hover { color: var(--text); background: var(--bg-light); }
 
-        /* Hero */
+        /* Hero - min-height prevents CLS */
         .hero {
             padding: 80px 0 60px;
             text-align: center;
             background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg) 100%);
+            min-height: 420px;
+            contain: layout style;
         }
 
         .hero__title {
@@ -348,7 +377,7 @@
             margin-bottom: 20px;
         }
 
-        .tool-card__icon svg { width: 28px; height: 28px; color: var(--primary); }
+        .tool-card__icon svg { width: 28px; height: 28px; min-width: 28px; min-height: 28px; color: var(--primary); }
 
         .tool-card__title { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
         .tool-card__desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
@@ -474,11 +503,14 @@
     <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Header -->
-    <header class="header">
+    <header class="header" role="banner">
         <div class="container header__inner">
-            <a href="index.html" class="logo">
-                <svg class="logo__icon" viewBox="0 0 32 32" fill="none">
+            <a href="index.html" class="logo" aria-label="Image Master - Home">
+                <svg class="logo__icon" viewBox="0 0 32 32" fill="none" width="32" height="32" aria-hidden="true">
                     <rect x="2" y="6" width="28" height="20" rx="3" stroke="currentColor" stroke-width="2.5"/>
                     <circle cx="11" cy="13" r="3" fill="currentColor"/>
                     <path d="M7 22L13 16L17 20L25 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -486,7 +518,7 @@
                 <span>Image Master</span>
             </a>
             
-            <nav class="nav">
+            <nav class="nav" aria-label="Main navigation">
                 <a href="background-remover.html" class="nav__link">Remove BG</a>
                 <a href="passport-photo.html" class="nav__link">Passport</a>
                 <a href="dp-resizer.html" class="nav__link">DP Maker</a>
@@ -495,6 +527,9 @@
         </div>
     </header>
 
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+    
     <!-- Hero -->
     <section class="hero">
         <div class="container">
@@ -507,13 +542,13 @@
             </p>
             <div class="hero__cta">
                 <a href="image-resize.html" class="btn btn--primary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
                         <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
                     </svg>
                     Resize Images
                 </a>
                 <a href="image-compress.html" class="btn btn--ghost">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
                         <path d="M9 3v18M15 3v18"/>
                     </svg>
@@ -539,17 +574,17 @@
     </section>
 
     <!-- Tools -->
-    <section class="tools">
+    <section class="tools" aria-labelledby="tools-heading">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Image Tools</h2>
+                <h2 class="section-title" id="tools-heading">Image Tools</h2>
                 <p class="section-subtitle">Professional tools that run entirely in your browser</p>
             </div>
             
             <div class="tools__grid">
                 <a href="background-remover.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <circle cx="12" cy="10" r="4"/>
                             <path d="M8 18c0-2.5 1.8-4 4-4s4 1.5 4 4"/>
@@ -560,7 +595,7 @@
                     <p class="tool-card__desc">Remove background from any image instantly. AI-powered, works with people, products & objects.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -568,7 +603,7 @@
 
                 <a href="logo-to-png.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <path d="M9 9h6v6H9z"/>
                             <path d="M3 3l18 18" stroke-dasharray="2 2"/>
@@ -578,7 +613,7 @@
                     <p class="tool-card__desc">Remove background from logos. Auto-detect or pick color. Perfect for business logos & icons.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -586,7 +621,7 @@
 
                 <a href="passport-photo.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="2" width="18" height="20" rx="2"/>
                             <circle cx="12" cy="10" r="4"/>
                             <path d="M6 18c0-3 2.7-5 6-5s6 2 6 5"/>
@@ -596,7 +631,7 @@
                     <p class="tool-card__desc">Passport, Aadhaar, PAN, Voter ID, Exams. Print 8/12/16/20 photos on A4. Save ₹100-200!</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -604,7 +639,7 @@
 
                 <a href="dp-resizer.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <circle cx="12" cy="12" r="10"/>
                             <circle cx="12" cy="10" r="3"/>
                             <path d="M6 18c0-3 2.7-4 6-4s6 1 6 4"/>
@@ -614,7 +649,7 @@
                     <p class="tool-card__desc">Perfect profile pictures for WhatsApp, Instagram, Facebook, Twitter. One-click presets!</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -622,7 +657,7 @@
 
                 <a href="image-resize.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
                         </svg>
                     </div>
@@ -630,7 +665,7 @@
                     <p class="tool-card__desc">Resize images to exact dimensions. Maintain aspect ratio or set custom sizes. Batch processing supported.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -638,7 +673,7 @@
 
                 <a href="image-size-increaser.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                             <polyline points="17 8 12 3 7 8"/>
                             <line x1="12" y1="3" x2="12" y2="15"/>
@@ -648,7 +683,7 @@
                     <p class="tool-card__desc">Increase image file size from 10KB to 50KB or more. Perfect for passport photos & document requirements.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -656,7 +691,7 @@
 
                 <a href="screenshot-beautifier.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <path d="M3 9h18"/>
                             <circle cx="7" cy="6" r="1"/>
@@ -667,7 +702,7 @@
                     <p class="tool-card__desc">Make screenshots stunning with beautiful backgrounds, shadows & mockups.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -675,7 +710,7 @@
 
                 <a href="image-to-pdf.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
                             <line x1="16" y1="13" x2="8" y2="13"/>
@@ -686,7 +721,7 @@
                     <p class="tool-card__desc">Convert images to PDF instantly. Merge multiple JPG, PNG into a single document.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -694,7 +729,7 @@
 
                 <a href="pdf-to-image.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
                             <rect x="8" y="12" width="8" height="6" rx="1"/>
@@ -704,7 +739,7 @@
                     <p class="tool-card__desc">Convert PDF pages to JPG or PNG images. Extract all pages with high quality.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -712,7 +747,7 @@
 
                 <a href="photo-collage.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="7" height="9" rx="1"/>
                             <rect x="14" y="3" width="7" height="5" rx="1"/>
                             <rect x="14" y="12" width="7" height="9" rx="1"/>
@@ -723,7 +758,7 @@
                     <p class="tool-card__desc">Create stunning photo collages. Multiple layouts, custom backgrounds & spacing.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -731,7 +766,7 @@
 
                 <a href="whatsapp-chat-to-pdf.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                             <path d="M8 10h8M8 14h4"/>
                         </svg>
@@ -740,7 +775,7 @@
                     <p class="tool-card__desc">Convert WhatsApp chat screenshots to a clean PDF. Merge multiple screenshots.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -748,7 +783,7 @@
 
                 <a href="format-converter.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M17 1l4 4-4 4"/>
                             <path d="M3 11V9a4 4 0 014-4h14"/>
                             <path d="M7 23l-4-4 4-4"/>
@@ -759,7 +794,7 @@
                     <p class="tool-card__desc">Convert between PNG, JPG, WEBP, GIF formats instantly. Batch convert multiple images.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -767,7 +802,7 @@
 
                 <a href="bulk-rename.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
                             <line x1="16" y1="13" x2="8" y2="13"/>
@@ -778,7 +813,7 @@
                     <p class="tool-card__desc">Rename multiple images at once. Custom names, auto-numbering, find & replace. Download ZIP.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -786,7 +821,7 @@
 
                 <a href="color-palette.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <circle cx="12" cy="12" r="10"/>
                             <circle cx="12" cy="8" r="2" fill="currentColor"/>
                             <circle cx="8" cy="14" r="2" fill="currentColor"/>
@@ -797,7 +832,7 @@
                     <p class="tool-card__desc">Extract beautiful color palettes from any image. Get HEX, RGB & HSL codes instantly.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -806,7 +841,7 @@
 
                 <a href="favicon-converter.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <circle cx="12" cy="12" r="4"/>
                         </svg>
@@ -815,7 +850,7 @@
                     <p class="tool-card__desc">Convert any image to favicon.ico. Multi-size (16, 32, 48, 64, 128). Perfect for websites.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -823,7 +858,7 @@
 
                 <a href="image-compress.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="2"/>
                             <path d="M9 3v18M15 3v18"/>
                         </svg>
@@ -832,7 +867,7 @@
                     <p class="tool-card__desc">Reduce image file size without losing quality. Smart compression for web & storage.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -840,7 +875,7 @@
 
                 <a href="image-crop.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M6.13 1L6 16a2 2 0 002 2h15"/>
                             <path d="M1 6.13L16 6a2 2 0 012 2v15"/>
                         </svg>
@@ -849,7 +884,7 @@
                     <p class="tool-card__desc">Crop images with preset ratios or custom dimensions. Rotate and flip support.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -857,7 +892,7 @@
 
                 <a href="add-watermark.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                             <path d="M2 17l10 5 10-5"/>
                             <path d="M2 12l10 5 10-5"/>
@@ -867,7 +902,7 @@
                     <p class="tool-card__desc">Add text or logo watermarks to protect your images. Batch processing supported.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -875,7 +910,7 @@
 
                 <a href="image-reducer.html" class="tool-card">
                     <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
@@ -885,7 +920,7 @@
                     <p class="tool-card__desc">Reduce image dimensions & file size. Quick presets for 25%, 50%, 75% reduction.</p>
                     <span class="tool-card__link">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -895,17 +930,17 @@
     </section>
 
     <!-- Features -->
-    <section class="features">
+    <section class="features" aria-labelledby="features-heading">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Why Image Master?</h2>
+                <h2 class="section-title" id="features-heading">Why Image Master?</h2>
                 <p class="section-subtitle">Built for privacy, speed, and simplicity</p>
             </div>
             
             <div class="features__grid">
                 <div class="feature">
                     <div class="feature__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" aria-hidden="true">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
@@ -915,7 +950,7 @@
 
                 <div class="feature">
                     <div class="feature__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" aria-hidden="true">
                             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                         </svg>
                     </div>
@@ -925,7 +960,7 @@
 
                 <div class="feature">
                     <div class="feature__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
@@ -937,7 +972,7 @@
 
                 <div class="feature">
                     <div class="feature__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" aria-hidden="true">
                             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
                         </svg>
                     </div>
@@ -964,10 +999,10 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq" style="padding: 60px 0; background: var(--bg-light);">
+    <section class="faq" style="padding: 60px 0; background: var(--bg-light);" aria-labelledby="faq-heading">
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Frequently Asked Questions</h2>
+                <h2 id="faq-heading" style="font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Frequently Asked Questions</h2>
                 <p style="color: var(--text-secondary);">Everything you need to know about Image Master</p>
             </div>
             
@@ -1018,9 +1053,10 @@
             </div>
         </div>
     </section>
-
+    </main>
+    
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer__grid">
                 <div class="footer__brand">
