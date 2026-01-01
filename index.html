@@ -192,7 +192,7 @@
             --bg-card: #ffffff;
             --text: #1a1a1a;
             --text-secondary: #555555;
-            --text-muted: #666666;
+            --text-muted: #595959;
             --primary: #4a90d9;
             --primary-hover: #3a7bc8;
             --primary-light: rgba(74, 144, 217, 0.1);
@@ -464,7 +464,8 @@
         .footer__logo svg { color: var(--primary); }
         .footer__tagline { font-size: 14px; color: var(--text-muted); }
 
-        .footer__links h4 {
+        .footer__heading {
+            display: block;
             font-size: 14px;
             font-weight: 600;
             color: var(--text);
@@ -1069,20 +1070,20 @@
                     </div>
                     <p class="footer__tagline">Free online image tools. 100% private processing.</p>
                 </div>
-                <div class="footer__links">
-                    <h4>Popular Tools</h4>
+                <nav class="footer__links" aria-label="Popular Tools">
+                    <strong class="footer__heading">Popular Tools</strong>
                     <a href="background-remover.html">Background Remover</a>
                     <a href="image-resize.html">Image Resize</a>
                     <a href="image-compress.html">Image Compress</a>
                     <a href="image-to-pdf.html">Image to PDF</a>
-                </div>
-                <div class="footer__links">
-                    <h4>More Tools</h4>
+                </nav>
+                <nav class="footer__links" aria-label="More Tools">
+                    <strong class="footer__heading">More Tools</strong>
                     <a href="passport-photo.html">Passport Photo</a>
                     <a href="photo-collage.html">Photo Collage</a>
                     <a href="format-converter.html">Format Converter</a>
                     <a href="color-palette.html">Color Palette</a>
-                </div>
+                </nav>
             </div>
             <div class="footer__bottom">
                 <p>&copy; 2025 Image Master. All rights reserved. All processing is done locally in your browser.</p>
