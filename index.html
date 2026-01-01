@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Critical: Early resource hints for faster FCP -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    
     <!-- SEO Meta Tags -->
     <title>Image Master – Free Online Image Tools | Resize, Compress, Convert & Edit Photos | Best Free Image Editor 2025</title>
     <meta name="description" content="Image Master is the ultimate free online image toolkit. Resize, compress, crop, convert, and edit photos instantly in your browser. 100% private processing - your images never leave your device. No signup, no watermarks, no limits. Features include background remover, passport photo maker, PDF converter, collage creator, screenshot beautifier, watermark tool, and format converter. Fast, secure, and completely free forever.">
@@ -183,6 +179,12 @@
             line-gap-override: 0%;
             size-adjust: 107%;
         }
+        
+        /* Minimal inline animation for hero - no external CSS needed */
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .hero__title,.hero__subtitle,.hero__cta{animation:fadeInUp .5s ease-out both}
+        .hero__subtitle{animation-delay:.1s}
+        .hero__cta{animation-delay:.2s}
         
         :root {
             --bg: #ffffff;
@@ -1092,10 +1094,9 @@
     <script src="js/analytics.js" defer></script>
     <script src="js/bug-report.js" defer></script>
     
-    <!-- Animations CSS - loaded after FCP -->
+    <!-- Animations CSS - loaded after page is interactive -->
     <script>
-    requestIdleCallback?requestIdleCallback(function(){var l=document.createElement('link');l.rel='stylesheet';l.href='css/animations.css';document.head.appendChild(l)}):window.addEventListener('load',function(){var l=document.createElement('link');l.rel='stylesheet';l.href='css/animations.css';document.head.appendChild(l)});
+    window.addEventListener('load',function(){setTimeout(function(){var l=document.createElement('link');l.rel='stylesheet';l.href='css/animations.css';document.head.appendChild(l)},100)});
     </script>
-    <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
 </body>
 </html>
