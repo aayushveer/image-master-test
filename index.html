@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- Critical: Early resource hints for faster FCP -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
     <!-- SEO Meta Tags -->
     <title>Image Master – Free Online Image Tools | Resize, Compress, Convert & Edit Photos | Best Free Image Editor 2025</title>
     <meta name="description" content="Image Master is the ultimate free online image toolkit. Resize, compress, crop, convert, and edit photos instantly in your browser. 100% private processing - your images never leave your device. No signup, no watermarks, no limits. Features include background remover, passport photo maker, PDF converter, collage creator, screenshot beautifier, watermark tool, and format converter. Fast, secure, and completely free forever.">
@@ -161,16 +165,12 @@
     <link rel="prefetch" href="image-compress.html" as="document">
     <link rel="prefetch" href="background-remover.html" as="document">
     <link rel="prefetch" href="passport-photo.html" as="document">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='3' fill='none' stroke='%234a90d9' stroke-width='2.5'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%234a90d9'/%3E%3Cpath d='M7 22L13 16L17 20L25 12' stroke='%234a90d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
     
-    <!-- Fonts - Optimized Loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- Fonts - Ultra-optimized for FCP -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
     
     <style>
@@ -498,9 +498,6 @@
             .footer__logo { justify-content: center; }
         }
     </style>
-    <!-- Deferred Animations CSS for faster FCP -->
-    <link rel="preload" href="css/animations.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
 </head>
 <body>
     <!-- Skip to main content link for accessibility -->
@@ -1094,5 +1091,11 @@
     <!-- Deferred Scripts for Better Performance -->
     <script src="js/analytics.js" defer></script>
     <script src="js/bug-report.js" defer></script>
+    
+    <!-- Animations CSS - loaded after FCP -->
+    <script>
+    requestIdleCallback?requestIdleCallback(function(){var l=document.createElement('link');l.rel='stylesheet';l.href='css/animations.css';document.head.appendChild(l)}):window.addEventListener('load',function(){var l=document.createElement('link');l.rel='stylesheet';l.href='css/animations.css';document.head.appendChild(l)});
+    </script>
+    <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
 </body>
 </html>
