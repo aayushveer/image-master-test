@@ -501,210 +501,289 @@
         applyMaskToImage();
     }
     
-    // NEW: Hair and fine edge refinement using color analysis
+    // PROFESSIONAL: Hair and fine edge refinement using color analysis
+    // Uses gradient-based edge detection + color similarity matching
     function refineHairEdges(maskData, width, height) {
         const data = maskData.data;
         const originalCtx = state.originalCanvas.getContext('2d');
         const originalData = originalCtx.getImageData(0, 0, width, height).data;
         
-        // Detect edge pixels and analyze color for hair-like regions
-        const edgePixels = [];
+        // STEP 1: Detect foreground color (average of high-confidence foreground)
+        let fgR = 0, fgG = 0, fgB = 0, fgCount = 0;
+        let bgR = 0, bgG = 0, bgB = 0, bgCount = 0;
         
-        for (let y = 2; y < height - 2; y++) {
-            for (let x = 2; x < width - 2; x++) {
+        for (let y = 0; y < height; y += 5) {
+            for (let x = 0; x < width; x += 5) {
                 const idx = (y * width + x) * 4;
                 const maskVal = data[idx];
                 
-                // Find edge pixels (transition zone)
-                if (maskVal > 30 && maskVal < 225) {
-                    edgePixels.push({ x, y, idx });
+                if (maskVal > 230) { // Definite foreground
+                    fgR += originalData[idx];
+                    fgG += originalData[idx + 1];
+                    fgB += originalData[idx + 2];
+                    fgCount++;
+                } else if (maskVal < 25) { // Definite background
+                    bgR += originalData[idx];
+                    bgG += originalData[idx + 1];
+                    bgB += originalData[idx + 2];
+                    bgCount++;
                 }
             }
         }
         
-        // For each edge pixel, analyze if it looks like hair
-        for (const pixel of edgePixels) {
-            const { x, y, idx } = pixel;
-            
-            // Get original color at this pixel
-            const r = originalData[idx];
-            const g = originalData[idx + 1];
-            const b = originalData[idx + 2];
-            
-            // Calculate color properties
-            const brightness = (r + g + b) / 3;
-            const saturation = Math.max(r, g, b) - Math.min(r, g, b);
-            
-            // Hair is typically darker and less saturated than background
-            // Also check local variance for texture detection
-            let localVariance = 0;
-            let neighborCount = 0;
-            
-            for (let dy = -2; dy <= 2; dy++) {
-                for (let dx = -2; dx <= 2; dx++) {
-                    if (dx === 0 && dy === 0) continue;
-                    const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                    const nr = originalData[nIdx];
-                    const ng = originalData[nIdx + 1];
-                    const nb = originalData[nIdx + 2];
-                    const nBright = (nr + ng + nb) / 3;
-                    localVariance += Math.abs(brightness - nBright);
-                    neighborCount++;
-                }
-            }
-            localVariance /= neighborCount;
-            
-            // High variance at edges suggests hair/fine detail
-            // Adjust mask value based on analysis
-            if (localVariance > 15) {
-                // Textured edge - likely hair, preserve more detail
-                const currentMask = data[idx];
-                
-                // Check if surrounded by more foreground than background
-                let fgCount = 0, bgCount = 0;
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                        if (data[nIdx] > 128) fgCount++;
-                        else bgCount++;
+        const fgAvg = fgCount > 0 ? { r: fgR / fgCount, g: fgG / fgCount, b: fgB / fgCount } : { r: 100, g: 100, b: 100 };
+        const bgAvg = bgCount > 0 ? { r: bgR / bgCount, g: bgG / bgCount, b: bgB / bgCount } : { r: 200, g: 200, b: 200 };
+        
+        // STEP 2: Process edge pixels with sophisticated analysis
+        const newData = new Float32Array(width * height);
+        for (let i = 0; i < data.length; i += 4) {
+            newData[i / 4] = data[i] / 255;
+        }
+        
+        // Multi-pass edge analysis
+        for (let pass = 0; pass < 2; pass++) {
+            for (let y = 3; y < height - 3; y++) {
+                for (let x = 3; x < width - 3; x++) {
+                    const idx = y * width + x;
+                    const maskVal = newData[idx];
+                    
+                    // Process edge pixels (0.1 to 0.9 alpha range)
+                    if (maskVal > 0.08 && maskVal < 0.92) {
+                        const pixelIdx = idx * 4;
+                        
+                        // Get pixel color
+                        const r = originalData[pixelIdx];
+                        const g = originalData[pixelIdx + 1];
+                        const b = originalData[pixelIdx + 2];
+                        
+                        // Calculate color distance to foreground and background
+                        const distToFg = Math.sqrt(
+                            Math.pow(r - fgAvg.r, 2) + 
+                            Math.pow(g - fgAvg.g, 2) + 
+                            Math.pow(b - fgAvg.b, 2)
+                        );
+                        const distToBg = Math.sqrt(
+                            Math.pow(r - bgAvg.r, 2) + 
+                            Math.pow(g - bgAvg.g, 2) + 
+                            Math.pow(b - bgAvg.b, 2)
+                        );
+                        
+                        // Color-based alpha estimation (closer to FG = higher alpha)
+                        const colorAlpha = distToBg / (distToFg + distToBg + 0.001);
+                        
+                        // Local texture analysis (high texture = likely hair)
+                        let localVariance = 0;
+                        let neighborAvg = 0;
+                        let neighborCount = 0;
+                        
+                        for (let dy = -2; dy <= 2; dy++) {
+                            for (let dx = -2; dx <= 2; dx++) {
+                                if (dx === 0 && dy === 0) continue;
+                                const nIdx = (y + dy) * width + (x + dx);
+                                const nPixelIdx = nIdx * 4;
+                                
+                                const nr = originalData[nPixelIdx];
+                                const ng = originalData[nPixelIdx + 1];
+                                const nb = originalData[nPixelIdx + 2];
+                                
+                                const nBright = (nr + ng + nb) / 3;
+                                const bright = (r + g + b) / 3;
+                                localVariance += Math.abs(bright - nBright);
+                                neighborAvg += newData[nIdx];
+                                neighborCount++;
+                            }
+                        }
+                        localVariance /= neighborCount;
+                        neighborAvg /= neighborCount;
+                        
+                        // Hair detection heuristics
+                        const brightness = (r + g + b) / 3;
+                        const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+                        const isHairLike = brightness < 120 && saturation < 80;
+                        const isHighTexture = localVariance > 12;
+                        
+                        // Compute final alpha with multiple factors
+                        let finalAlpha = maskVal;
+                        
+                        // Blend with color-based estimation
+                        const colorWeight = 0.25; // How much to trust color matching
+                        finalAlpha = finalAlpha * (1 - colorWeight) + colorAlpha * colorWeight;
+                        
+                        // Boost hair-like dark pixels
+                        if (isHairLike && isHighTexture) {
+                            finalAlpha = Math.min(1, finalAlpha + 0.15);
+                        }
+                        
+                        // Context-aware: if neighbors are mostly foreground, boost this pixel
+                        if (neighborAvg > 0.6 && finalAlpha < 0.8) {
+                            finalAlpha = Math.min(1, finalAlpha + 0.12);
+                        }
+                        
+                        // Suppress pixels that look like background but have some alpha
+                        if (distToBg < distToFg * 0.5 && !isHairLike) {
+                            finalAlpha = Math.max(0, finalAlpha * 0.7);
+                        }
+                        
+                        newData[idx] = Math.max(0, Math.min(1, finalAlpha));
                     }
                 }
+            }
+        }
+        
+        // STEP 3: Apply trimap-style matting refinement
+        // Create soft transition zones based on gradient
+        for (let y = 2; y < height - 2; y++) {
+            for (let x = 2; x < width - 2; x++) {
+                const idx = y * width + x;
+                const alpha = newData[idx];
                 
-                if (fgCount > bgCount) {
-                    // More foreground neighbors - boost this pixel
-                    const boost = Math.min(255, currentMask + (localVariance * 2));
-                    data[idx] = data[idx + 1] = data[idx + 2] = boost;
-                } else if (brightness < 100 && saturation < 80) {
-                    // Dark, low saturation at edge - likely hair strand
-                    const boost = Math.min(255, currentMask + 40);
-                    data[idx] = data[idx + 1] = data[idx + 2] = boost;
+                // Compute gradient magnitude
+                const gx = newData[(y) * width + (x + 1)] - newData[(y) * width + (x - 1)];
+                const gy = newData[(y + 1) * width + x] - newData[(y - 1) * width + x];
+                const gradMag = Math.sqrt(gx * gx + gy * gy);
+                
+                // High gradient = edge, apply smoothing
+                if (gradMag > 0.1) {
+                    // Weighted average with neighbors
+                    let sum = alpha * 2;
+                    let weights = 2;
+                    
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0) continue;
+                            const nIdx = (y + dy) * width + (x + dx);
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            const w = 1 / dist;
+                            sum += newData[nIdx] * w;
+                            weights += w;
+                        }
+                    }
+                    
+                    newData[idx] = sum / weights;
                 }
             }
         }
         
-        // Final pass: smooth the refined edges
-        const smoothed = new Uint8ClampedArray(data);
-        for (let y = 1; y < height - 1; y++) {
-            for (let x = 1; x < width - 1; x++) {
-                const idx = (y * width + x) * 4;
-                const val = data[idx];
-                
-                // Only smooth edge pixels
-                if (val > 20 && val < 235) {
-                    const neighbors = [
-                        data[((y-1) * width + x) * 4],
-                        data[((y+1) * width + x) * 4],
-                        data[(y * width + x - 1) * 4],
-                        data[(y * width + x + 1) * 4]
-                    ];
-                    const avg = (val * 2 + neighbors.reduce((a, b) => a + b, 0)) / 6;
-                    smoothed[idx] = smoothed[idx + 1] = smoothed[idx + 2] = Math.round(avg);
-                }
-            }
-        }
-        
-        for (let i = 0; i < data.length; i++) {
-            data[i] = smoothed[i];
+        // Write back to mask
+        for (let i = 0; i < newData.length; i++) {
+            const val = Math.round(Math.max(0, Math.min(1, newData[i])) * 255);
+            data[i * 4] = data[i * 4 + 1] = data[i * 4 + 2] = val;
         }
     }
     
-    // Advanced edge refinement - World class quality
+    // Advanced edge refinement - World class quality with SOFT ALPHA
     // NOW uses state.edgeRefinement (0-100) to control smoothness
     function advancedEdgeRefinement(maskData, width, height) {
         const data = maskData.data;
         const edgeLevel = state.edgeRefinement; // 0 = sharp, 100 = very smooth
         
         // Map edge level to processing parameters
-        // 0 (Sharp): minimal processing, 100 (Very Smooth): maximum feathering
         const erosionPasses = edgeLevel < 25 ? 1 : 2;
         const dilationPasses = edgeLevel < 25 ? 2 : 3;
-        const featherRadius = Math.max(1, Math.floor(1 + (edgeLevel / 100) * 6)); // 1 to 7
-        const blurRadius = Math.max(1, Math.floor(1 + (edgeLevel / 100) * 4)); // 1 to 5
-        const blurSigma = 0.5 + (edgeLevel / 100) * 2; // 0.5 to 2.5
+        const featherRadius = Math.max(1, Math.min(5, Math.floor(1 + (edgeLevel / 100) * 4)));
+        const blurSigma = 0.8 + (edgeLevel / 100) * 1.5;
         
-        // Pass 1: Softer threshold to preserve hair details
-        const thresholdHigh = edgeLevel < 50 ? 210 : 190;
-        const thresholdLow = edgeLevel < 50 ? 45 : 60;
+        // STEP 1: Generate SOFT ALPHA from raw AI mask (no hard thresholds!)
+        // Instead of binary 0/255, we create smooth gradient transitions
+        const softMask = new Float32Array(width * height);
         
         for (let i = 0; i < data.length; i += 4) {
-            const val = data[i];
-            if (val > thresholdHigh) {
-                data[i] = data[i + 1] = data[i + 2] = 255;
-            } else if (val < thresholdLow) {
-                data[i] = data[i + 1] = data[i + 2] = 0;
-            }
+            const idx = i / 4;
+            // Store as 0-1 float for precision
+            softMask[idx] = data[i] / 255;
         }
         
-        // Pass 2: Gentle erosion (smaller kernel for hair preservation)
+        // STEP 2: Apply sigmoid contrast to sharpen transitions without making binary
+        // This preserves soft edges while improving separation
+        const contrastStrength = 2.5 + (edgeLevel / 100) * 1.5;
+        for (let i = 0; i < softMask.length; i++) {
+            const v = softMask[i];
+            // Sigmoid-like contrast enhancement centered at 0.5
+            // Maps 0->0, 0.5->0.5, 1->1 with steeper transition
+            const adjusted = 1 / (1 + Math.exp(-contrastStrength * (v - 0.5) * 4));
+            softMask[i] = adjusted;
+        }
+        
+        // STEP 3: Edge-aware morphological smoothing (not binary!)
+        // Gentle erosion for cleaner edges
         for (let pass = 0; pass < erosionPasses; pass++) {
-            const tempData = new Uint8ClampedArray(data);
-            const kernelSize = 1; // Keep small to preserve fine details
+            const temp = new Float32Array(softMask);
             
-            for (let y = kernelSize; y < height - kernelSize; y++) {
-                for (let x = kernelSize; x < width - kernelSize; x++) {
-                    const idx = (y * width + x) * 4;
-                    let min = 255;
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    const idx = y * width + x;
+                    const center = temp[idx];
                     
-                    // Use weighted kernel - center has more influence
-                    let weightedMin = tempData[idx];
-                    for (let dy = -kernelSize; dy <= kernelSize; dy++) {
-                        for (let dx = -kernelSize; dx <= kernelSize; dx++) {
-                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                            const weight = (dx === 0 && dy === 0) ? 0.5 : 0.5 / 8;
-                            min = Math.min(min, tempData[nIdx]);
+                    // Only erode if center is not fully opaque
+                    if (center < 0.98) {
+                        let minNeighbor = center;
+                        
+                        // 8-neighborhood minimum with distance weighting
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                if (dx === 0 && dy === 0) continue;
+                                const nIdx = (y + dy) * width + (x + dx);
+                                const dist = Math.sqrt(dx * dx + dy * dy);
+                                const weight = 1 / dist;
+                                minNeighbor = Math.min(minNeighbor, temp[nIdx] * (1 + (1 - weight) * 0.1));
+                            }
                         }
+                        
+                        // Soft blend instead of hard minimum
+                        softMask[idx] = center * 0.6 + minNeighbor * 0.4;
                     }
-                    
-                    // Blend instead of hard minimum for softer edges
-                    data[idx] = data[idx + 1] = data[idx + 2] = Math.round(tempData[idx] * 0.7 + min * 0.3);
                 }
             }
         }
         
-        // Pass 3: Dilation passes
+        // STEP 4: Targeted dilation to recover hair strands
         for (let pass = 0; pass < dilationPasses; pass++) {
-            const tempData = new Uint8ClampedArray(data);
-            const kernelSize = edgeLevel < 25 ? 1 : 2;
+            const temp = new Float32Array(softMask);
             
-            for (let y = kernelSize; y < height - kernelSize; y++) {
-                for (let x = kernelSize; x < width - kernelSize; x++) {
-                    const idx = (y * width + x) * 4;
-                    let max = 0;
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    const idx = y * width + x;
+                    const center = temp[idx];
                     
-                    for (let dy = -kernelSize; dy <= kernelSize; dy++) {
-                        for (let dx = -kernelSize; dx <= kernelSize; dx++) {
-                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                            max = Math.max(max, tempData[nIdx]);
+                    // Only dilate semi-transparent areas
+                    if (center > 0.1 && center < 0.9) {
+                        let maxNeighbor = center;
+                        
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                if (dx === 0 && dy === 0) continue;
+                                const nIdx = (y + dy) * width + (x + dx);
+                                maxNeighbor = Math.max(maxNeighbor, temp[nIdx]);
+                            }
                         }
+                        
+                        // Boost towards max but keep some original
+                        softMask[idx] = center * 0.5 + maxNeighbor * 0.5;
                     }
-                    
-                    data[idx] = data[idx + 1] = data[idx + 2] = max;
                 }
             }
         }
         
-        // Pass 4: Edge feathering (controlled by edge level)
+        // STEP 5: Distance-weighted edge feathering
         if (featherRadius > 0) {
-            const edgeData = new Uint8ClampedArray(data);
+            const temp = new Float32Array(softMask);
             
             for (let y = featherRadius; y < height - featherRadius; y++) {
                 for (let x = featherRadius; x < width - featherRadius; x++) {
-                    const idx = (y * width + x) * 4;
-                    const val = edgeData[idx];
+                    const idx = y * width + x;
+                    const center = temp[idx];
                     
-                    // Check if this is an edge pixel
-                    let isEdge = false;
-                    for (let dy = -1; dy <= 1 && !isEdge; dy++) {
-                        for (let dx = -1; dx <= 1 && !isEdge; dx++) {
-                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                            if (Math.abs(edgeData[nIdx] - val) > 100) {
-                                isEdge = true;
-                            }
+                    // Detect edge pixels (gradient in alpha)
+                    let gradientMag = 0;
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            const nIdx = (y + dy) * width + (x + dx);
+                            gradientMag += Math.abs(temp[nIdx] - center);
                         }
                     }
                     
-                    if (isEdge) {
-                        // Apply weighted average for smooth edge
+                    // Only feather actual edges
+                    if (gradientMag > 0.3) {
                         let sum = 0;
                         let weightSum = 0;
                         
@@ -712,49 +791,60 @@
                             for (let dx = -featherRadius; dx <= featherRadius; dx++) {
                                 const dist = Math.sqrt(dx * dx + dy * dy);
                                 if (dist <= featherRadius) {
-                                    const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                                    const weight = 1 - (dist / featherRadius);
-                                    sum += edgeData[nIdx] * weight * weight;
-                                    weightSum += weight * weight;
+                                    const nIdx = (y + dy) * width + (x + dx);
+                                    // Gaussian-like weight
+                                    const weight = Math.exp(-dist * dist / (2 * (featherRadius * 0.5) * (featherRadius * 0.5)));
+                                    sum += temp[nIdx] * weight;
+                                    weightSum += weight;
                                 }
                             }
                         }
                         
-                        const smoothVal = Math.round(sum / weightSum);
-                        data[idx] = data[idx + 1] = data[idx + 2] = smoothVal;
+                        softMask[idx] = sum / weightSum;
                     }
                 }
             }
         }
         
-        // Pass 5: Gaussian blur (controlled by edge level)
-        if (blurRadius > 0) {
-            const kernel = [];
-            let kernelSum = 0;
-            
-            for (let y = -blurRadius; y <= blurRadius; y++) {
-                for (let x = -blurRadius; x <= blurRadius; x++) {
-                    const g = Math.exp(-(x * x + y * y) / (2 * blurSigma * blurSigma));
-                    kernel.push({ x, y, g });
-                    kernelSum += g;
-                }
+        // STEP 6: Final Gaussian blur for super smooth edges
+        const blurRadius = 2;
+        const kernel = [];
+        let kernelSum = 0;
+        
+        for (let y = -blurRadius; y <= blurRadius; y++) {
+            for (let x = -blurRadius; x <= blurRadius; x++) {
+                const g = Math.exp(-(x * x + y * y) / (2 * blurSigma * blurSigma));
+                kernel.push({ x, y, g });
+                kernelSum += g;
             }
-            
-            const finalData = new Uint8ClampedArray(data);
-            
-            for (let y = blurRadius; y < height - blurRadius; y++) {
-                for (let x = blurRadius; x < width - blurRadius; x++) {
-                    const idx = (y * width + x) * 4;
-                    let sum = 0;
-                    
-                    for (const k of kernel) {
-                        const nIdx = ((y + k.y) * width + (x + k.x)) * 4;
-                        sum += finalData[nIdx] * k.g;
-                    }
-                    
-                    const val = Math.round(sum / kernelSum);
-                    data[idx] = data[idx + 1] = data[idx + 2] = val;
+        }
+        
+        const blurTemp = new Float32Array(softMask);
+        
+        for (let y = blurRadius; y < height - blurRadius; y++) {
+            for (let x = blurRadius; x < width - blurRadius; x++) {
+                const idx = y * width + x;
+                let sum = 0;
+                
+                for (const k of kernel) {
+                    const nIdx = (y + k.y) * width + (x + k.x);
+                    sum += blurTemp[nIdx] * k.g;
                 }
+                
+                softMask[idx] = sum / kernelSum;
+            }
+        }
+        
+        // STEP 7: Write back to mask with proper 8-bit conversion
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const idx = y * width + x;
+                const i = idx * 4;
+                
+                // Clamp and convert to 0-255
+                const val = Math.round(Math.max(0, Math.min(1, softMask[idx])) * 255);
+                data[i] = data[i + 1] = data[i + 2] = val;
+                data[i + 3] = 255;
             }
         }
     }
@@ -809,25 +899,224 @@
         const maskCtx = state.maskCanvas.getContext('2d');
         const maskData = maskCtx.getImageData(0, 0, width, height);
         
-        // Apply mask with edge anti-aliasing
+        // STEP 1: Detect background color for decontamination
+        const bgColor = detectBackgroundColor(originalData, maskData, width, height);
+        
+        // STEP 2: Apply complete professional pipeline
         const resultData = ctx.createImageData(width, height);
         
-        for (let i = 0; i < originalData.data.length; i += 4) {
-            const maskAlpha = maskData.data[i]; // Use red channel as alpha
-            
-            // Pre-multiply alpha for better edge quality
-            const alpha = maskAlpha / 255;
-            
-            resultData.data[i] = originalData.data[i];
-            resultData.data[i + 1] = originalData.data[i + 1];
-            resultData.data[i + 2] = originalData.data[i + 2];
-            resultData.data[i + 3] = Math.round(alpha * 255);
+        // Dynamic feather radius based on image size
+        const featherRadius = Math.max(1, Math.min(3, Math.floor(Math.max(width, height) / 800)));
+        
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const i = (y * width + x) * 4;
+                const maskAlpha = maskData.data[i] / 255;
+                
+                let r = originalData.data[i];
+                let g = originalData.data[i + 1];
+                let b = originalData.data[i + 2];
+                
+                // STEP 3: Color Decontamination (remove background spill/halo)
+                // Only apply to edge pixels (semi-transparent)
+                if (maskAlpha > 0.05 && maskAlpha < 0.95) {
+                    const decontaminated = decontaminateColor(r, g, b, bgColor, maskAlpha);
+                    r = decontaminated.r;
+                    g = decontaminated.g;
+                    b = decontaminated.b;
+                }
+                
+                // STEP 4: Apply soft alpha with premultiplied alpha for better edges
+                resultData.data[i] = r;
+                resultData.data[i + 1] = g;
+                resultData.data[i + 2] = b;
+                resultData.data[i + 3] = Math.round(maskAlpha * 255);
+            }
         }
         
         ctx.putImageData(resultData, 0, 0);
         
+        // STEP 5: Apply morphological cleanup for dots/artifacts
+        cleanupArtifacts(ctx, width, height);
+        
         // Apply new background
         applyNewBackground();
+    }
+    
+    // NEW: Detect dominant background color from masked-out areas
+    function detectBackgroundColor(originalData, maskData, width, height) {
+        const samples = [];
+        const data = originalData.data;
+        const mask = maskData.data;
+        
+        // Sample pixels where mask is very low (definite background)
+        for (let y = 0; y < height; y += 10) {
+            for (let x = 0; x < width; x += 10) {
+                const i = (y * width + x) * 4;
+                if (mask[i] < 30) { // Definite background
+                    samples.push({
+                        r: data[i],
+                        g: data[i + 1],
+                        b: data[i + 2]
+                    });
+                }
+            }
+        }
+        
+        if (samples.length === 0) {
+            return { r: 128, g: 128, b: 128 }; // Fallback neutral
+        }
+        
+        // Calculate average background color
+        const avg = samples.reduce((acc, c) => ({
+            r: acc.r + c.r,
+            g: acc.g + c.g,
+            b: acc.b + c.b
+        }), { r: 0, g: 0, b: 0 });
+        
+        return {
+            r: Math.round(avg.r / samples.length),
+            g: Math.round(avg.g / samples.length),
+            b: Math.round(avg.b / samples.length)
+        };
+    }
+    
+    // NEW: Color decontamination - removes background color spill from edges
+    // This is what removes the green/dark halo around hair
+    function decontaminateColor(r, g, b, bgColor, alpha) {
+        // Calculate how much background color is "spilling" into this pixel
+        // Using color difference in LAB-like space for perceptual accuracy
+        
+        const fgWeight = alpha;
+        const bgWeight = 1 - alpha;
+        
+        // Estimate what the pure foreground color should be
+        // By removing the background contribution
+        // Formula: observed = fg * alpha + bg * (1 - alpha)
+        // Therefore: fg = (observed - bg * (1 - alpha)) / alpha
+        
+        if (alpha < 0.1) {
+            return { r, g, b }; // Too transparent, don't modify
+        }
+        
+        // Calculate decontaminated color
+        let newR = (r - bgColor.r * bgWeight) / fgWeight;
+        let newG = (g - bgColor.g * bgWeight) / fgWeight;
+        let newB = (b - bgColor.b * bgWeight) / fgWeight;
+        
+        // Clamp values
+        newR = Math.max(0, Math.min(255, newR));
+        newG = Math.max(0, Math.min(255, newG));
+        newB = Math.max(0, Math.min(255, newB));
+        
+        // Blend between original and decontaminated based on how close to edge
+        // More aggressive decontamination for semi-transparent pixels
+        const decontamStrength = Math.sin(alpha * Math.PI); // Peak at 0.5 alpha
+        
+        return {
+            r: Math.round(r * (1 - decontamStrength * 0.7) + newR * decontamStrength * 0.7),
+            g: Math.round(g * (1 - decontamStrength * 0.7) + newG * decontamStrength * 0.7),
+            b: Math.round(b * (1 - decontamStrength * 0.7) + newB * decontamStrength * 0.7)
+        };
+    }
+    
+    // NEW: Morphological cleanup - removes small dot artifacts
+    function cleanupArtifacts(ctx, width, height) {
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        
+        // Find and remove isolated transparent pixels inside foreground (holes)
+        // Find and remove isolated opaque pixels in background (dots)
+        
+        const minClusterSize = 9; // Minimum pixels to keep a cluster
+        const visited = new Uint8Array(width * height);
+        
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                const i = (y * width + x) * 4;
+                const alpha = data[i + 3];
+                
+                // Check for isolated opaque pixels (potential artifact)
+                if (alpha > 200 && !visited[y * width + x]) {
+                    // Count connected opaque neighbors
+                    const cluster = floodFillCount(data, visited, x, y, width, height, true);
+                    
+                    if (cluster.length < minClusterSize) {
+                        // Remove this small cluster (it's an artifact)
+                        for (const idx of cluster) {
+                            data[idx + 3] = 0;
+                        }
+                    }
+                }
+                
+                // Check for isolated transparent pixels (holes in foreground)
+                if (alpha < 50 && !visited[y * width + x]) {
+                    const cluster = floodFillCount(data, visited, x, y, width, height, false);
+                    
+                    if (cluster.length < minClusterSize && cluster.length > 0) {
+                        // Check if surrounded by opaque - then fill the hole
+                        let opaqueNeighbors = 0;
+                        for (const idx of cluster) {
+                            const px = (idx / 4) % width;
+                            const py = Math.floor((idx / 4) / width);
+                            
+                            // Check 4-neighbors for opaque
+                            const neighbors = [
+                                ((py - 1) * width + px) * 4,
+                                ((py + 1) * width + px) * 4,
+                                (py * width + px - 1) * 4,
+                                (py * width + px + 1) * 4
+                            ];
+                            
+                            for (const n of neighbors) {
+                                if (n >= 0 && n < data.length && data[n + 3] > 200) {
+                                    opaqueNeighbors++;
+                                }
+                            }
+                        }
+                        
+                        if (opaqueNeighbors > cluster.length * 2) {
+                            // Fill the hole
+                            for (const idx of cluster) {
+                                data[idx + 3] = 255;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+    }
+    
+    // Helper: Flood fill to count connected pixels
+    function floodFillCount(data, visited, startX, startY, width, height, forOpaque) {
+        const cluster = [];
+        const stack = [[startX, startY]];
+        const threshold = forOpaque ? 200 : 50;
+        
+        while (stack.length > 0 && cluster.length < 100) { // Limit for performance
+            const [x, y] = stack.pop();
+            
+            if (x < 0 || x >= width || y < 0 || y >= height) continue;
+            
+            const idx = y * width + x;
+            if (visited[idx]) continue;
+            
+            const i = idx * 4;
+            const alpha = data[i + 3];
+            const matches = forOpaque ? (alpha > threshold) : (alpha < threshold);
+            
+            if (!matches) continue;
+            
+            visited[idx] = 1;
+            cluster.push(i);
+            
+            // Add 4-neighbors
+            stack.push([x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]);
+        }
+        
+        return cluster;
     }
 
     // Color-based background removal
