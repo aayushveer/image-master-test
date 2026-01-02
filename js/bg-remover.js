@@ -13,6 +13,7 @@
         originalCanvas: null,
         resultCanvas: null,
         maskCanvas: null,
+        rawMaskData: null, // NEW: Store raw mask for edge slider updates
         mode: 'auto', // auto or color
         subject: 'person',
         edgeRefinement: 50,
@@ -110,11 +111,16 @@
             btn.addEventListener('click', () => selectSubject(btn.dataset.subject));
         });
         
-        // Edge refinement slider
+        // Edge refinement slider - NOW APPLIES REAL CHANGES
         el.edgeSlider.addEventListener('input', (e) => {
             state.edgeRefinement = parseInt(e.target.value);
             const labels = ['Sharp', 'Light', 'Medium', 'Smooth', 'Very Smooth'];
             el.edgeValue.textContent = labels[Math.floor(state.edgeRefinement / 25)];
+            
+            // NEW: Re-apply edge refinement in real-time if already processed
+            if (state.processed && state.maskCanvas && state.originalCanvas) {
+                reapplyEdgeRefinement();
+            }
         });
         
         // Tolerance slider
@@ -475,13 +481,19 @@
         maskCtx.drawImage(results.segmentationMask, 0, 0, width, height);
         
         updateStep(3);
-        el.processingText.textContent = 'Refining edges...';
+        el.processingText.textContent = 'Refining edges & hair...';
         
-        // Get mask data and apply advanced refinement
+        // Get mask data
         const maskData = maskCtx.getImageData(0, 0, width, height);
         
-        // Apply multi-pass refinement for clean edges
+        // Store raw mask data for real-time edge slider updates
+        state.rawMaskData = new Uint8ClampedArray(maskData.data);
+        
+        // Apply advanced refinement with hair-aware processing
         advancedEdgeRefinement(maskData, width, height);
+        
+        // NEW: Apply hair refinement pass using original image colors
+        refineHairEdges(maskData, width, height);
         
         maskCtx.putImageData(maskData, 0, 0);
         
@@ -489,52 +501,178 @@
         applyMaskToImage();
     }
     
-    // Advanced edge refinement - World class quality
-    function advancedEdgeRefinement(maskData, width, height) {
+    // NEW: Hair and fine edge refinement using color analysis
+    function refineHairEdges(maskData, width, height) {
         const data = maskData.data;
+        const originalCtx = state.originalCanvas.getContext('2d');
+        const originalData = originalCtx.getImageData(0, 0, width, height).data;
         
-        // Pass 1: Strong threshold to clean noise
-        for (let i = 0; i < data.length; i += 4) {
-            const val = data[i];
-            if (val > 180) {
-                data[i] = data[i + 1] = data[i + 2] = 255;
-            } else if (val < 80) {
-                data[i] = data[i + 1] = data[i + 2] = 0;
-            }
-        }
+        // Detect edge pixels and analyze color for hair-like regions
+        const edgePixels = [];
         
-        // Pass 2: Multiple erosion passes to remove edge noise
-        for (let pass = 0; pass < 2; pass++) {
-            const tempData = new Uint8ClampedArray(data);
-            for (let y = 2; y < height - 2; y++) {
-                for (let x = 2; x < width - 2; x++) {
-                    const idx = (y * width + x) * 4;
-                    let min = 255;
-                    
-                    // 5x5 kernel for stronger erosion
-                    for (let dy = -2; dy <= 2; dy++) {
-                        for (let dx = -2; dx <= 2; dx++) {
-                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                            min = Math.min(min, tempData[nIdx]);
-                        }
-                    }
-                    
-                    data[idx] = data[idx + 1] = data[idx + 2] = min;
+        for (let y = 2; y < height - 2; y++) {
+            for (let x = 2; x < width - 2; x++) {
+                const idx = (y * width + x) * 4;
+                const maskVal = data[idx];
+                
+                // Find edge pixels (transition zone)
+                if (maskVal > 30 && maskVal < 225) {
+                    edgePixels.push({ x, y, idx });
                 }
             }
         }
         
-        // Pass 3: Multiple dilation passes to restore subject
-        for (let pass = 0; pass < 3; pass++) {
+        // For each edge pixel, analyze if it looks like hair
+        for (const pixel of edgePixels) {
+            const { x, y, idx } = pixel;
+            
+            // Get original color at this pixel
+            const r = originalData[idx];
+            const g = originalData[idx + 1];
+            const b = originalData[idx + 2];
+            
+            // Calculate color properties
+            const brightness = (r + g + b) / 3;
+            const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+            
+            // Hair is typically darker and less saturated than background
+            // Also check local variance for texture detection
+            let localVariance = 0;
+            let neighborCount = 0;
+            
+            for (let dy = -2; dy <= 2; dy++) {
+                for (let dx = -2; dx <= 2; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                    const nr = originalData[nIdx];
+                    const ng = originalData[nIdx + 1];
+                    const nb = originalData[nIdx + 2];
+                    const nBright = (nr + ng + nb) / 3;
+                    localVariance += Math.abs(brightness - nBright);
+                    neighborCount++;
+                }
+            }
+            localVariance /= neighborCount;
+            
+            // High variance at edges suggests hair/fine detail
+            // Adjust mask value based on analysis
+            if (localVariance > 15) {
+                // Textured edge - likely hair, preserve more detail
+                const currentMask = data[idx];
+                
+                // Check if surrounded by more foreground than background
+                let fgCount = 0, bgCount = 0;
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                        if (data[nIdx] > 128) fgCount++;
+                        else bgCount++;
+                    }
+                }
+                
+                if (fgCount > bgCount) {
+                    // More foreground neighbors - boost this pixel
+                    const boost = Math.min(255, currentMask + (localVariance * 2));
+                    data[idx] = data[idx + 1] = data[idx + 2] = boost;
+                } else if (brightness < 100 && saturation < 80) {
+                    // Dark, low saturation at edge - likely hair strand
+                    const boost = Math.min(255, currentMask + 40);
+                    data[idx] = data[idx + 1] = data[idx + 2] = boost;
+                }
+            }
+        }
+        
+        // Final pass: smooth the refined edges
+        const smoothed = new Uint8ClampedArray(data);
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                const idx = (y * width + x) * 4;
+                const val = data[idx];
+                
+                // Only smooth edge pixels
+                if (val > 20 && val < 235) {
+                    const neighbors = [
+                        data[((y-1) * width + x) * 4],
+                        data[((y+1) * width + x) * 4],
+                        data[(y * width + x - 1) * 4],
+                        data[(y * width + x + 1) * 4]
+                    ];
+                    const avg = (val * 2 + neighbors.reduce((a, b) => a + b, 0)) / 6;
+                    smoothed[idx] = smoothed[idx + 1] = smoothed[idx + 2] = Math.round(avg);
+                }
+            }
+        }
+        
+        for (let i = 0; i < data.length; i++) {
+            data[i] = smoothed[i];
+        }
+    }
+    
+    // Advanced edge refinement - World class quality
+    // NOW uses state.edgeRefinement (0-100) to control smoothness
+    function advancedEdgeRefinement(maskData, width, height) {
+        const data = maskData.data;
+        const edgeLevel = state.edgeRefinement; // 0 = sharp, 100 = very smooth
+        
+        // Map edge level to processing parameters
+        // 0 (Sharp): minimal processing, 100 (Very Smooth): maximum feathering
+        const erosionPasses = edgeLevel < 25 ? 1 : 2;
+        const dilationPasses = edgeLevel < 25 ? 2 : 3;
+        const featherRadius = Math.max(1, Math.floor(1 + (edgeLevel / 100) * 6)); // 1 to 7
+        const blurRadius = Math.max(1, Math.floor(1 + (edgeLevel / 100) * 4)); // 1 to 5
+        const blurSigma = 0.5 + (edgeLevel / 100) * 2; // 0.5 to 2.5
+        
+        // Pass 1: Softer threshold to preserve hair details
+        const thresholdHigh = edgeLevel < 50 ? 210 : 190;
+        const thresholdLow = edgeLevel < 50 ? 45 : 60;
+        
+        for (let i = 0; i < data.length; i += 4) {
+            const val = data[i];
+            if (val > thresholdHigh) {
+                data[i] = data[i + 1] = data[i + 2] = 255;
+            } else if (val < thresholdLow) {
+                data[i] = data[i + 1] = data[i + 2] = 0;
+            }
+        }
+        
+        // Pass 2: Gentle erosion (smaller kernel for hair preservation)
+        for (let pass = 0; pass < erosionPasses; pass++) {
             const tempData = new Uint8ClampedArray(data);
-            for (let y = 2; y < height - 2; y++) {
-                for (let x = 2; x < width - 2; x++) {
+            const kernelSize = 1; // Keep small to preserve fine details
+            
+            for (let y = kernelSize; y < height - kernelSize; y++) {
+                for (let x = kernelSize; x < width - kernelSize; x++) {
+                    const idx = (y * width + x) * 4;
+                    let min = 255;
+                    
+                    // Use weighted kernel - center has more influence
+                    let weightedMin = tempData[idx];
+                    for (let dy = -kernelSize; dy <= kernelSize; dy++) {
+                        for (let dx = -kernelSize; dx <= kernelSize; dx++) {
+                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                            const weight = (dx === 0 && dy === 0) ? 0.5 : 0.5 / 8;
+                            min = Math.min(min, tempData[nIdx]);
+                        }
+                    }
+                    
+                    // Blend instead of hard minimum for softer edges
+                    data[idx] = data[idx + 1] = data[idx + 2] = Math.round(tempData[idx] * 0.7 + min * 0.3);
+                }
+            }
+        }
+        
+        // Pass 3: Dilation passes
+        for (let pass = 0; pass < dilationPasses; pass++) {
+            const tempData = new Uint8ClampedArray(data);
+            const kernelSize = edgeLevel < 25 ? 1 : 2;
+            
+            for (let y = kernelSize; y < height - kernelSize; y++) {
+                for (let x = kernelSize; x < width - kernelSize; x++) {
                     const idx = (y * width + x) * 4;
                     let max = 0;
                     
-                    // 5x5 kernel
-                    for (let dy = -2; dy <= 2; dy++) {
-                        for (let dx = -2; dx <= 2; dx++) {
+                    for (let dy = -kernelSize; dy <= kernelSize; dy++) {
+                        for (let dx = -kernelSize; dx <= kernelSize; dx++) {
                             const nIdx = ((y + dy) * width + (x + dx)) * 4;
                             max = Math.max(max, tempData[nIdx]);
                         }
@@ -545,79 +683,112 @@
             }
         }
         
-        // Pass 4: Detect edges and apply smooth feathering
-        const edgeData = new Uint8ClampedArray(data);
-        const featherRadius = 4;
-        
-        for (let y = featherRadius; y < height - featherRadius; y++) {
-            for (let x = featherRadius; x < width - featherRadius; x++) {
-                const idx = (y * width + x) * 4;
-                const val = edgeData[idx];
-                
-                // Check if this is an edge pixel
-                let isEdge = false;
-                for (let dy = -1; dy <= 1 && !isEdge; dy++) {
-                    for (let dx = -1; dx <= 1 && !isEdge; dx++) {
-                        const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                        if (Math.abs(edgeData[nIdx] - val) > 100) {
-                            isEdge = true;
-                        }
-                    }
-                }
-                
-                if (isEdge) {
-                    // Apply weighted average for smooth edge
-                    let sum = 0;
-                    let weightSum = 0;
+        // Pass 4: Edge feathering (controlled by edge level)
+        if (featherRadius > 0) {
+            const edgeData = new Uint8ClampedArray(data);
+            
+            for (let y = featherRadius; y < height - featherRadius; y++) {
+                for (let x = featherRadius; x < width - featherRadius; x++) {
+                    const idx = (y * width + x) * 4;
+                    const val = edgeData[idx];
                     
-                    for (let dy = -featherRadius; dy <= featherRadius; dy++) {
-                        for (let dx = -featherRadius; dx <= featherRadius; dx++) {
-                            const dist = Math.sqrt(dx * dx + dy * dy);
-                            if (dist <= featherRadius) {
-                                const nIdx = ((y + dy) * width + (x + dx)) * 4;
-                                const weight = 1 - (dist / featherRadius);
-                                sum += edgeData[nIdx] * weight * weight;
-                                weightSum += weight * weight;
+                    // Check if this is an edge pixel
+                    let isEdge = false;
+                    for (let dy = -1; dy <= 1 && !isEdge; dy++) {
+                        for (let dx = -1; dx <= 1 && !isEdge; dx++) {
+                            const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                            if (Math.abs(edgeData[nIdx] - val) > 100) {
+                                isEdge = true;
                             }
                         }
                     }
                     
-                    const smoothVal = Math.round(sum / weightSum);
-                    data[idx] = data[idx + 1] = data[idx + 2] = smoothVal;
+                    if (isEdge) {
+                        // Apply weighted average for smooth edge
+                        let sum = 0;
+                        let weightSum = 0;
+                        
+                        for (let dy = -featherRadius; dy <= featherRadius; dy++) {
+                            for (let dx = -featherRadius; dx <= featherRadius; dx++) {
+                                const dist = Math.sqrt(dx * dx + dy * dy);
+                                if (dist <= featherRadius) {
+                                    const nIdx = ((y + dy) * width + (x + dx)) * 4;
+                                    const weight = 1 - (dist / featherRadius);
+                                    sum += edgeData[nIdx] * weight * weight;
+                                    weightSum += weight * weight;
+                                }
+                            }
+                        }
+                        
+                        const smoothVal = Math.round(sum / weightSum);
+                        data[idx] = data[idx + 1] = data[idx + 2] = smoothVal;
+                    }
                 }
             }
         }
         
-        // Pass 5: Final Gaussian blur for natural edges
-        const blurRadius = 3;
-        const sigma = 1.5;
-        const kernel = [];
-        let kernelSum = 0;
-        
-        for (let y = -blurRadius; y <= blurRadius; y++) {
-            for (let x = -blurRadius; x <= blurRadius; x++) {
-                const g = Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
-                kernel.push({ x, y, g });
-                kernelSum += g;
-            }
-        }
-        
-        const finalData = new Uint8ClampedArray(data);
-        
-        for (let y = blurRadius; y < height - blurRadius; y++) {
-            for (let x = blurRadius; x < width - blurRadius; x++) {
-                const idx = (y * width + x) * 4;
-                let sum = 0;
-                
-                for (const k of kernel) {
-                    const nIdx = ((y + k.y) * width + (x + k.x)) * 4;
-                    sum += finalData[nIdx] * k.g;
+        // Pass 5: Gaussian blur (controlled by edge level)
+        if (blurRadius > 0) {
+            const kernel = [];
+            let kernelSum = 0;
+            
+            for (let y = -blurRadius; y <= blurRadius; y++) {
+                for (let x = -blurRadius; x <= blurRadius; x++) {
+                    const g = Math.exp(-(x * x + y * y) / (2 * blurSigma * blurSigma));
+                    kernel.push({ x, y, g });
+                    kernelSum += g;
                 }
-                
-                const val = Math.round(sum / kernelSum);
-                data[idx] = data[idx + 1] = data[idx + 2] = val;
+            }
+            
+            const finalData = new Uint8ClampedArray(data);
+            
+            for (let y = blurRadius; y < height - blurRadius; y++) {
+                for (let x = blurRadius; x < width - blurRadius; x++) {
+                    const idx = (y * width + x) * 4;
+                    let sum = 0;
+                    
+                    for (const k of kernel) {
+                        const nIdx = ((y + k.y) * width + (x + k.x)) * 4;
+                        sum += finalData[nIdx] * k.g;
+                    }
+                    
+                    const val = Math.round(sum / kernelSum);
+                    data[idx] = data[idx + 1] = data[idx + 2] = val;
+                }
             }
         }
+    }
+    
+    // NEW: Re-apply edge refinement when slider changes
+    function reapplyEdgeRefinement() {
+        if (!state.originalCanvas || !state.maskCanvas) return;
+        
+        const width = state.originalCanvas.width;
+        const height = state.originalCanvas.height;
+        
+        // We need to re-run the AI segmentation to get fresh mask
+        // For performance, we'll store the original raw mask and re-process it
+        if (!state.rawMaskData) {
+            // Fallback: just re-apply current mask with new settings
+            applyMaskToImage();
+            return;
+        }
+        
+        // Re-create mask canvas from raw mask
+        const maskCtx = state.maskCanvas.getContext('2d');
+        const maskData = new ImageData(
+            new Uint8ClampedArray(state.rawMaskData),
+            width,
+            height
+        );
+        
+        // Apply edge refinement with current slider value
+        advancedEdgeRefinement(maskData, width, height);
+        
+        maskCtx.putImageData(maskData, 0, 0);
+        
+        // Re-apply to image
+        applyMaskToImage();
     }
 
     function applyMaskToImage() {
@@ -812,6 +983,7 @@
         state.processed = false;
         state.resultCanvas = null;
         state.maskCanvas = null;
+        state.rawMaskData = null; // NEW: Clear raw mask data
         
         // Reset preview to original
         const ctx = el.previewCanvas.getContext('2d');
@@ -830,6 +1002,7 @@
         state.originalCanvas = null;
         state.resultCanvas = null;
         state.maskCanvas = null;
+        state.rawMaskData = null; // NEW: Clear raw mask data
         state.processed = false;
         state.pickedColor = null;
         

@@ -317,8 +317,15 @@ const App = {
         const w = this.canvas.width;
         const h = this.canvas.height;
         
-        // Create mask
-        const mask = new Uint8Array(w * h);
+        // Create mask (float for smooth transitions)
+        const mask = new Float32Array(w * h);
+        
+        // IMPROVED: Exponential tolerance curve for better perceptual control
+        // At 0% = very strict (distance 5), at 100% = remove everything connected
+        const normalizedTolerance = tolerance / 100;
+        const maxDistance = tolerance === 100 
+            ? 999 // At 100%, remove ALL background-connected pixels regardless of color
+            : 5 + Math.pow(normalizedTolerance, 1.5) * 437; // Exponential curve: 5 to 442
         
         // First pass: mark pixels to remove based on color similarity
         for (let i = 0; i < data.length; i += 4) {
@@ -332,36 +339,44 @@ const App = {
                 Math.pow(b - bgColor.b, 2)
             );
             
-            const maxDistance = tolerance * 4.42; // Scale tolerance to 0-442 range
             const pixelIdx = i / 4;
             
             if (distance <= maxDistance) {
-                mask[pixelIdx] = 1; // Mark for removal
+                // IMPROVED: Soft edge based on distance ratio for anti-aliasing
+                if (distance < maxDistance * 0.7) {
+                    mask[pixelIdx] = 1; // Fully remove
+                } else {
+                    // Gradual falloff at edges
+                    mask[pixelIdx] = 1 - ((distance - maxDistance * 0.7) / (maxDistance * 0.3));
+                    mask[pixelIdx] = Math.max(0, Math.min(1, mask[pixelIdx]));
+                }
             }
         }
         
-        // If removeSimilar, flood fill from corners
+        // If removeSimilar, flood fill from corners (ensures only background is removed)
         if (removeSimilar) {
             this.floodFillMask(mask, w, h, bgColor, tolerance);
         }
+        
+        // IMPROVED: Morphological cleanup to remove isolated dots/artifacts
+        this.morphologicalCleanup(mask, w, h);
         
         // Apply smoothing (edge feathering)
         if (smoothing > 0) {
             this.smoothMaskEdges(mask, w, h, smoothing);
         }
         
+        // IMPROVED: Final noise removal pass - remove small isolated transparent/opaque regions
+        this.removeIsolatedPixels(mask, w, h, 3); // Remove clusters smaller than 3x3
+        
         // Apply mask to image
         for (let i = 0; i < mask.length; i++) {
             const dataIdx = i * 4;
-            let alpha = invert ? mask[i] * 255 : (1 - mask[i]) * 255;
+            let alpha = invert ? mask[i] : (1 - mask[i]);
             
-            // If alpha is partial, blend with background (for smooth edges)
-            if (alpha > 0 && alpha < 255) {
-                data[dataIdx + 3] = Math.round(alpha);
-            } else if (alpha === 0) {
-                data[dataIdx + 3] = 0;
-            }
-            // else keep original alpha
+            // Clamp and apply alpha
+            alpha = Math.max(0, Math.min(1, alpha));
+            data[dataIdx + 3] = Math.round(alpha * 255);
         }
         
         // Draw result
@@ -370,9 +385,129 @@ const App = {
         resultCtx.putImageData(resultData, 0, 0);
     },
     
+    // NEW: Morphological cleanup - erode then dilate to remove noise
+    morphologicalCleanup(mask, w, h) {
+        const temp = new Float32Array(mask);
+        
+        // Erosion pass - shrink mask to remove single-pixel noise
+        for (let y = 1; y < h - 1; y++) {
+            for (let x = 1; x < w - 1; x++) {
+                const idx = y * w + x;
+                if (mask[idx] > 0.5) {
+                    // Check 4-connected neighbors
+                    const neighbors = [
+                        mask[idx - 1], mask[idx + 1],
+                        mask[idx - w], mask[idx + w]
+                    ];
+                    // If any neighbor is not marked, this might be noise
+                    const markedNeighbors = neighbors.filter(n => n > 0.5).length;
+                    if (markedNeighbors < 2) {
+                        temp[idx] = 0; // Remove isolated pixel
+                    }
+                }
+            }
+        }
+        
+        // Copy back
+        for (let i = 0; i < mask.length; i++) {
+            mask[i] = temp[i];
+        }
+        
+        // Dilation pass - restore edges that were over-eroded
+        for (let y = 1; y < h - 1; y++) {
+            for (let x = 1; x < w - 1; x++) {
+                const idx = y * w + x;
+                if (temp[idx] > 0.5) {
+                    // Dilate to neighbors if they were originally marked
+                    const neighbors = [idx - 1, idx + 1, idx - w, idx + w];
+                    for (const n of neighbors) {
+                        if (mask[n] < 0.5 && this.originalData) {
+                            // Check if neighbor matches background color
+                            const nDataIdx = n * 4;
+                            const bgColor = this.settings.bgColor || this.detectBackgroundColor();
+                            const r = this.originalData.data[nDataIdx];
+                            const g = this.originalData.data[nDataIdx + 1];
+                            const b = this.originalData.data[nDataIdx + 2];
+                            const dist = Math.sqrt(
+                                Math.pow(r - bgColor.r, 2) +
+                                Math.pow(g - bgColor.g, 2) +
+                                Math.pow(b - bgColor.b, 2)
+                            );
+                            if (dist < 50) {
+                                mask[n] = temp[idx]; // Extend mask to similar neighbor
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    
+    // NEW: Remove isolated pixel clusters smaller than threshold
+    removeIsolatedPixels(mask, w, h, minSize) {
+        const visited = new Uint8Array(w * h);
+        
+        // Find and remove small isolated transparent regions inside the subject
+        for (let y = 1; y < h - 1; y++) {
+            for (let x = 1; x < w - 1; x++) {
+                const idx = y * w + x;
+                if (visited[idx] || mask[idx] > 0.5) continue;
+                
+                // Flood fill to find cluster size
+                const cluster = [];
+                const queue = [idx];
+                visited[idx] = 1;
+                
+                while (queue.length > 0 && cluster.length < minSize * minSize + 1) {
+                    const curr = queue.shift();
+                    cluster.push(curr);
+                    
+                    const cx = curr % w;
+                    const cy = Math.floor(curr / w);
+                    
+                    const neighbors = [
+                        curr - 1, curr + 1, curr - w, curr + w
+                    ];
+                    
+                    for (const n of neighbors) {
+                        const nx = n % w;
+                        const ny = Math.floor(n / w);
+                        if (nx >= 0 && nx < w && ny >= 0 && ny < h &&
+                            !visited[n] && mask[n] < 0.5 &&
+                            Math.abs(nx - cx) <= 1 && Math.abs(ny - cy) <= 1) {
+                            visited[n] = 1;
+                            queue.push(n);
+                        }
+                    }
+                }
+                
+                // If cluster is small and NOT connected to edge, fill it (remove the hole)
+                if (cluster.length > 0 && cluster.length < minSize * minSize) {
+                    let touchesEdge = cluster.some(idx => {
+                        const x = idx % w;
+                        const y = Math.floor(idx / w);
+                        return x === 0 || x === w - 1 || y === 0 || y === h - 1;
+                    });
+                    
+                    if (!touchesEdge) {
+                        // Fill the hole - these are artifacts inside the logo
+                        for (const idx of cluster) {
+                            mask[idx] = 0; // Keep these pixels (don't make transparent)
+                        }
+                    }
+                }
+            }
+        }
+    },
+    
     floodFillMask(mask, w, h, bgColor, tolerance) {
         const visited = new Uint8Array(w * h);
-        const maxDist = tolerance * 4.42;
+        
+        // IMPROVED: At 100% tolerance, use very high distance threshold
+        const normalizedTolerance = tolerance / 100;
+        const maxDist = tolerance === 100 
+            ? 999 
+            : 5 + Math.pow(normalizedTolerance, 1.5) * 437;
         
         const queue = [];
         
@@ -404,6 +539,9 @@ const App = {
         
         const data = this.originalData.data;
         
+        // Reset mask - only flood-filled areas will be marked
+        const newMask = new Float32Array(w * h);
+        
         while (queue.length > 0) {
             const idx = queue.shift();
             const x = idx % w;
@@ -421,12 +559,19 @@ const App = {
             );
             
             if (dist <= maxDist) {
-                mask[idx] = 1;
+                // IMPROVED: Soft edge calculation
+                if (dist < maxDist * 0.7) {
+                    newMask[idx] = 1;
+                } else {
+                    newMask[idx] = Math.max(newMask[idx], 1 - ((dist - maxDist * 0.7) / (maxDist * 0.3)));
+                }
                 
-                // Add neighbors
+                // Add neighbors (8-connected for better coverage)
                 const neighbors = [
                     idx - 1, idx + 1,
-                    idx - w, idx + w
+                    idx - w, idx + w,
+                    idx - w - 1, idx - w + 1,
+                    idx + w - 1, idx + w + 1
                 ];
                 
                 for (const n of neighbors) {
@@ -443,9 +588,15 @@ const App = {
                 }
             }
         }
+        
+        // Copy flood-filled mask back (this ensures only edge-connected bg is removed)
+        for (let i = 0; i < mask.length; i++) {
+            mask[i] = newMask[i];
+        }
     },
     
     smoothMaskEdges(mask, w, h, radius) {
+        // IMPROVED: Better edge smoothing with Gaussian-like blur
         const output = new Float32Array(mask);
         
         for (let pass = 0; pass < radius; pass++) {
@@ -455,23 +606,29 @@ const App = {
                 for (let x = 1; x < w - 1; x++) {
                     const idx = y * w + x;
                     
-                    // Only smooth edge pixels
-                    if (mask[idx] === 0 || mask[idx] === 1) {
-                        const neighbors = [
-                            temp[idx - 1], temp[idx + 1],
-                            temp[idx - w], temp[idx + w],
-                            temp[idx - w - 1], temp[idx - w + 1],
-                            temp[idx + w - 1], temp[idx + w + 1]
-                        ];
+                    // Get current value and neighbors
+                    const center = temp[idx];
+                    const neighbors = [
+                        temp[idx - 1], temp[idx + 1],
+                        temp[idx - w], temp[idx + w],
+                        temp[idx - w - 1], temp[idx - w + 1],
+                        temp[idx + w - 1], temp[idx + w + 1]
+                    ];
+                    
+                    const hasTransparent = neighbors.some(n => n > 0.3);
+                    const hasOpaque = neighbors.some(n => n < 0.7);
+                    
+                    // Only smooth edge pixels (transition zones)
+                    if (hasTransparent && hasOpaque) {
+                        // Weighted Gaussian-like average
+                        // Center weight: 4, adjacent: 2, diagonal: 1
+                        const weighted = 
+                            center * 4 +
+                            (neighbors[0] + neighbors[1] + neighbors[2] + neighbors[3]) * 2 +
+                            (neighbors[4] + neighbors[5] + neighbors[6] + neighbors[7]) * 1;
+                        const totalWeight = 4 + 4 * 2 + 4 * 1;
                         
-                        const hasTransparent = neighbors.some(n => n > 0.5);
-                        const hasOpaque = neighbors.some(n => n < 0.5);
-                        
-                        if (hasTransparent && hasOpaque) {
-                            // Edge pixel - smooth it
-                            const avg = neighbors.reduce((a, b) => a + b, 0) / 8;
-                            output[idx] = avg;
-                        }
+                        output[idx] = weighted / totalWeight;
                     }
                 }
             }

@@ -464,6 +464,20 @@ img, svg { display: block; max-width: 100%; }
 
 .bg-circle.white { background: #ffffff; }
 .bg-circle.black { background: #1a1a1a; border-color: #1a1a1a; }
+.bg-circle.transparent { 
+    background: linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+.bg-hint {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+}
 
 /* Resize Button */
 .resize-btn {

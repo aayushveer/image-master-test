@@ -160,6 +160,30 @@
                     <p class="preview-subtitle">Drag to adjust • Scroll to zoom</p>
                 </div>
                 
+                <!-- NEW: Mode Toggle for Auto/Manual -->
+                <div class="mode-toggle" id="mode-toggle">
+                    <button class="mode-btn active" id="btn-mode-auto" data-mode="auto" title="Auto-center face (suggested)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                        Auto
+                    </button>
+                    <button class="mode-btn" id="btn-mode-manual" data-mode="manual" title="Manual positioning - full control">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h6v6M14 10l7-7M9 21H3v-6M10 14l-7 7"/>
+                        </svg>
+                        Manual
+                    </button>
+                    <button class="mode-btn" id="btn-reset-position" title="Reset to center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+                
                 <div class="crop-area" id="crop-area">
                     <div class="crop-container" id="crop-container">
                         <img id="source-image" alt="Source">

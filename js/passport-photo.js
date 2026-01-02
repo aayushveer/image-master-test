@@ -62,7 +62,10 @@
         dragStart: { x: 0, y: 0 },
         resultBlob: null,
         printBlob: null,
-        printCopies: 8
+        printCopies: 8,
+        // NEW: Manual mode support
+        mode: 'auto', // 'auto' or 'manual'
+        savedPositions: {} // Store positions per spec for manual mode
     };
 
     // DOM Elements
@@ -81,6 +84,11 @@
         btnZoomIn: document.getElementById('btn-zoom-in'),
         btnZoomOut: document.getElementById('btn-zoom-out'),
         btnRotate: document.getElementById('btn-rotate'),
+        
+        // NEW: Mode toggle buttons
+        btnModeAuto: document.getElementById('btn-mode-auto'),
+        btnModeManual: document.getElementById('btn-mode-manual'),
+        btnResetPosition: document.getElementById('btn-reset-position'),
         
         countrySelect: document.getElementById('country-select'),
         sizeMm: document.getElementById('size-mm'),
@@ -131,6 +139,17 @@
         el.btnZoomOut.addEventListener('click', () => adjustZoom(-10));
         el.btnRotate.addEventListener('click', handleRotate);
         
+        // NEW: Mode toggle buttons
+        if (el.btnModeAuto) {
+            el.btnModeAuto.addEventListener('click', () => setMode('auto'));
+        }
+        if (el.btnModeManual) {
+            el.btnModeManual.addEventListener('click', () => setMode('manual'));
+        }
+        if (el.btnResetPosition) {
+            el.btnResetPosition.addEventListener('click', resetPosition);
+        }
+        
         // Country select
         el.countrySelect.addEventListener('change', handleCountryChange);
         
@@ -166,6 +185,59 @@
         
         // Scroll to zoom
         el.cropContainer.addEventListener('wheel', handleWheel, { passive: false });
+    }
+    
+    // NEW: Set positioning mode
+    function setMode(mode) {
+        state.mode = mode;
+        
+        // Update UI
+        if (el.btnModeAuto) {
+            el.btnModeAuto.classList.toggle('active', mode === 'auto');
+        }
+        if (el.btnModeManual) {
+            el.btnModeManual.classList.toggle('active', mode === 'manual');
+        }
+        
+        // In auto mode, re-fit the image to center
+        if (mode === 'auto' && state.image) {
+            fitImageToCrop();
+        }
+        // In manual mode, restore saved position for current spec if exists
+        else if (mode === 'manual' && state.savedPositions[state.spec]) {
+            const saved = state.savedPositions[state.spec];
+            state.zoom = saved.zoom;
+            state.offsetX = saved.offsetX;
+            state.offsetY = saved.offsetY;
+            el.zoomSlider.value = saved.zoom;
+            updateImageTransform();
+        }
+    }
+    
+    // NEW: Reset position to center
+    function resetPosition() {
+        state.offsetX = 0;
+        state.offsetY = 0;
+        state.zoom = 100;
+        el.zoomSlider.value = 100;
+        
+        if (state.image) {
+            fitImageToCrop();
+        }
+        
+        // Clear saved position for current spec
+        delete state.savedPositions[state.spec];
+    }
+    
+    // NEW: Save current position for manual mode
+    function savePosition() {
+        if (state.mode === 'manual') {
+            state.savedPositions[state.spec] = {
+                zoom: state.zoom,
+                offsetX: state.offsetX,
+                offsetY: state.offsetY
+            };
+        }
     }
 
     // Drag & Drop for upload
@@ -320,6 +392,12 @@
     function handleZoom(e) {
         state.zoom = parseInt(e.target.value);
         updateImageTransform();
+        
+        // NEW: Switch to manual mode when user zooms
+        if (state.mode === 'auto') {
+            setMode('manual');
+        }
+        savePosition();
     }
 
     function adjustZoom(delta) {
@@ -330,6 +408,12 @@
         state.zoom = newValue;
         el.zoomSlider.value = newValue;
         updateImageTransform();
+        
+        // NEW: Switch to manual mode when user zooms
+        if (state.mode === 'auto') {
+            setMode('manual');
+        }
+        savePosition();
     }
 
     function handleWheel(e) {
@@ -353,6 +437,11 @@
             y: point.clientY - state.offsetY
         };
         e.preventDefault();
+        
+        // NEW: Switch to manual mode when user starts dragging
+        if (state.mode === 'auto') {
+            setMode('manual');
+        }
     }
 
     function doDrag(e) {
@@ -365,7 +454,11 @@
     }
 
     function endDrag() {
-        state.isDragging = false;
+        if (state.isDragging) {
+            state.isDragging = false;
+            // NEW: Save position when drag ends
+            savePosition();
+        }
     }
 
     // Country change
@@ -373,6 +466,16 @@
         state.spec = e.target.value;
         updateSizeDisplay();
         updateCropContainerAspectRatio();
+        
+        // NEW: In manual mode, restore saved position for new spec if exists
+        if (state.mode === 'manual' && state.savedPositions[state.spec]) {
+            const saved = state.savedPositions[state.spec];
+            state.zoom = saved.zoom;
+            state.offsetX = saved.offsetX;
+            state.offsetY = saved.offsetY;
+            el.zoomSlider.value = saved.zoom;
+            updateImageTransform();
+        }
     }
 
     function updateSizeDisplay() {

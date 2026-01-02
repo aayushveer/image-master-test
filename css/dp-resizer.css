@@ -152,11 +152,15 @@ body {
 
 .preview-container img {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    /* FIXED: Removed width/height/object-fit to allow JS transform to work */
+    /* Size and position now controlled by JavaScript */
     cursor: move;
     user-select: none;
+    -webkit-user-drag: none;
+    transform-origin: center center;
+    /* Start centered */
+    left: 50%;
+    top: 50%;
 }
 
 .crop-overlay {

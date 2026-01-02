@@ -305,12 +305,34 @@ const App = {
             canvas.width = newWidth;
             canvas.height = newHeight;
             
-            // Background
-            ctx.fillStyle = this.bgColor === 'black' ? '#000000' : '#ffffff';
-            ctx.fillRect(0, 0, newWidth, newHeight);
+            // FIXED: Properly handle background color
+            // Determine background color based on selection
+            let bgColorHex;
+            if (this.bgColor === 'black') {
+                bgColorHex = '#000000';
+            } else if (this.bgColor === 'white') {
+                bgColorHex = '#ffffff';
+            } else if (this.bgColor === 'transparent') {
+                bgColorHex = null; // No background fill
+            } else {
+                // Custom color (if we add color picker later)
+                bgColorHex = this.bgColor.startsWith('#') ? this.bgColor : '#ffffff';
+            }
             
             const image = new Image();
             image.onload = () => {
+                // Step 1: Fill background color FIRST (if not transparent)
+                // This is crucial for transparent PNGs being converted to JPEG
+                if (bgColorHex) {
+                    ctx.fillStyle = bgColorHex;
+                    ctx.fillRect(0, 0, newWidth, newHeight);
+                }
+                
+                // Step 2: Draw image on top - transparent areas will show background
+                // Using source-over (default) composite operation
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(image, 0, 0, newWidth, newHeight);
                 
                 let mimeType = 'image/jpeg';

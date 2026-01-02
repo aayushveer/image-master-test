@@ -23,6 +23,7 @@
         platform: 'whatsapp',
         size: 500,
         zoom: 100,
+        baseScale: 1, // NEW: Base scale to fit image in container
         offsetX: 0,
         offsetY: 0,
         isDragging: false,
@@ -170,6 +171,23 @@
     // Setup preview
     function setupPreview() {
         el.previewImage.src = state.image.dataUrl;
+        
+        // Calculate base scale to cover the container
+        const containerSize = el.previewContainer.clientWidth || 350;
+        const imgW = state.image.width;
+        const imgH = state.image.height;
+        
+        // Scale to cover container (image fills container)
+        const scaleW = containerSize / imgW;
+        const scaleH = containerSize / imgH;
+        state.baseScale = Math.max(scaleW, scaleH) * 1.1; // Slightly larger for margin
+        
+        // Reset offset
+        state.offsetX = 0;
+        state.offsetY = 0;
+        state.zoom = 100;
+        el.zoomSlider.value = 100;
+        
         updateImageTransform();
         updateSizeDisplay();
     }
@@ -214,12 +232,24 @@
         updateImageTransform();
     }
 
-    // Update image transform
+    // FIXED: Update image transform - proper sizing and panning
     function updateImageTransform() {
         if (!state.image) return;
         
-        const scale = state.zoom / 100;
-        el.previewImage.style.transform = `translate(${state.offsetX}px, ${state.offsetY}px) scale(${scale})`;
+        const containerSize = el.previewContainer.clientWidth || 350;
+        const scale = state.baseScale * (state.zoom / 100);
+        
+        const imgW = state.image.width * scale;
+        const imgH = state.image.height * scale;
+        
+        // Calculate the transform: center image then apply offset
+        // CSS has left:50%, top:50% so we need to offset by half image size + user offset
+        const translateX = -imgW / 2 + state.offsetX;
+        const translateY = -imgH / 2 + state.offsetY;
+        
+        el.previewImage.style.width = imgW + 'px';
+        el.previewImage.style.height = imgH + 'px';
+        el.previewImage.style.transform = `translate(${translateX}px, ${translateY}px)`;
     }
 
     // Drag handlers
@@ -271,22 +301,42 @@
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, size, size);
         
-        // Calculate dimensions
+        // Calculate dimensions based on current transform
         const containerSize = el.previewContainer.clientWidth || 350;
-        const scale = (state.zoom / 100) * (size / containerSize);
+        const scale = state.baseScale * (state.zoom / 100);
         
         const img = state.image.element;
         const imgW = img.width * scale;
         const imgH = img.height * scale;
         
-        // Center offset
-        const offsetX = (state.offsetX / containerSize) * size;
-        const offsetY = (state.offsetY / containerSize) * size;
+        // Calculate visible area in source image coordinates
+        // The preview shows a centered circle with user offset
+        // We need to map from container space to source image space
         
-        const x = (size - imgW) / 2 + offsetX;
-        const y = (size - imgH) / 2 + offsetY;
+        // Center of container (which is also center of visible circle)
+        const centerX = containerSize / 2;
+        const centerY = containerSize / 2;
         
-        ctx.drawImage(img, x, y, imgW, imgH);
+        // Image position in container
+        const imgLeft = centerX - imgW / 2 + state.offsetX;
+        const imgTop = centerY - imgH / 2 + state.offsetY;
+        
+        // Visible area bounds (the circle, but we crop a square)
+        const visibleLeft = 0;
+        const visibleTop = 0;
+        const visibleRight = containerSize;
+        const visibleBottom = containerSize;
+        
+        // Map to source image coordinates
+        const srcX = (visibleLeft - imgLeft) / scale;
+        const srcY = (visibleTop - imgTop) / scale;
+        const srcW = containerSize / scale;
+        const srcH = containerSize / scale;
+        
+        // Draw with high quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, size, size);
         
         // Create blob
         canvas.toBlob((blob) => {

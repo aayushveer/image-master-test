@@ -209,6 +209,53 @@ img, svg { display: block; max-width: 100%; }
 .guide-line--eyes { top: 35%; }
 .guide-line--chin { top: 75%; }
 
+/* Mode Toggle - Auto/Manual */
+.mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 6px;
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    width: fit-content;
+}
+
+.mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+}
+
+.mode-btn:hover {
+    color: var(--text);
+    background: rgba(0,0,0,0.05);
+}
+
+.mode-btn.active {
+    color: white;
+    background: var(--primary);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.mode-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+#btn-reset-position {
+    margin-left: 4px;
+    border-left: 1px solid var(--border);
+    padding-left: 12px;
+}
+
 /* Crop Controls */
 .crop-controls {
     display: flex;
