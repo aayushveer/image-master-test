@@ -1,0 +1,260 @@
+/**
+ * ANIMATIONS.CSS - Lightweight Micro-Interactions
+ * GPU-accelerated, no layout shift, no blink
+ * Optimized for performance (~8KB vs 21KB before)
+ */
+
+/* ============================================
+   CSS Variables for Animation Control
+   ============================================ */
+:root {
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    --duration-fast: 0.15s;
+    --duration-normal: 0.3s;
+    --duration-slow: 0.5s;
+}
+
+/* ============================================
+   Core Keyframes (Only what's needed)
+   ============================================ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ============================================
+   Hover Transitions (No animation on load)
+   ============================================ */
+
+/* Logo - No Animation (Brand stability) */
+.logo {
+    /* Intentionally static - brand elements should not animate */
+}
+
+/* Back Button */
+.back-btn {
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+.back-btn:hover {
+    transform: translateX(-4px);
+    color: var(--primary, #4a90d9);
+}
+
+/* ============================================
+   Card Hover Effects (NO load animation)
+   ============================================ */
+.tool-card, .img-card, .result-item {
+    transition: transform var(--duration-fast) ease,
+                box-shadow var(--duration-fast) ease;
+}
+
+.tool-card:hover, .img-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.result-item:hover {
+    transform: translateX(8px);
+    background: rgba(74, 144, 217, 0.05);
+}
+
+/* ============================================
+   Button Animations
+   ============================================ */
+button, .btn, [class*="btn-"] {
+    position: relative;
+    overflow: hidden;
+    transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+/* Primary Button Hover */
+.btn--primary:hover, .btn-primary:hover, 
+[class*="btn-download"]:hover, [class*="btn-convert"]:hover,
+[class*="btn-resize"]:hover, [class*="btn-compress"]:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.btn--primary:active, .btn-primary:active {
+    opacity: 0.9;
+}
+
+/* Icon Button Animation */
+.icon-btn:hover, [class*="btn-zoom"]:hover, 
+[class*="btn-rotate"]:hover, [class*="btn-flip"]:hover {
+    opacity: 0.7;
+}
+
+/* Disabled State */
+button:disabled, .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ============================================
+   Dropzone Animations
+   ============================================ */
+.dropzone, .upload-area, [class*="drop"] {
+    transition: border-color var(--duration-fast) ease;
+}
+
+.dropzone:hover, .upload-area:hover {
+    border-color: var(--primary, #4a90d9);
+}
+
+.dropzone.dragover, .drag-over {
+    border-color: var(--primary, #4a90d9);
+    background: rgba(74, 144, 217, 0.02);
+}
+
+.dropzone svg, .upload-area svg {
+    transition: opacity var(--duration-fast) ease;
+}
+.dropzone:hover svg, .upload-area:hover svg {
+    opacity: 0.8;
+}
+
+/* ============================================
+   Input & Slider Animations
+   ============================================ */
+input[type="text"], input[type="number"], textarea, select {
+    transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+input:focus, textarea:focus, select:focus {
+    box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    transition: all var(--duration-fast) var(--ease-out-back);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* ============================================
+   Tab & Toggle Hover
+   ============================================ */
+.tab, [class*="tab-"], .mode, .preset, .format-btn, 
+.platform-btn, .bg-btn, .orient-btn, .size-btn {
+    transition: opacity var(--duration-fast) ease;
+}
+
+.tab:hover, .preset:hover, .format-btn:hover, 
+.platform-btn:hover, .bg-btn:hover {
+    opacity: 0.8;
+}
+
+/* ============================================
+   Processing States
+   ============================================ */
+.processing {
+    transition: opacity var(--duration-normal) var(--ease-out-expo);
+}
+
+.progress-bar, [class*="progress-bar"] {
+    transition: width var(--duration-fast) var(--ease-out-expo);
+}
+
+.spinner, [class*="spinner"] {
+    animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   Footer Links
+   ============================================ */
+footer a, .footer a {
+    transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+footer a:hover, .footer a:hover {
+    color: var(--primary, #4a90d9);
+}
+
+/* ============================================
+   Bug Report Button
+   ============================================ */
+.bug-report-btn {
+    transition: opacity var(--duration-fast) ease !important;
+}
+
+.bug-report-btn:hover {
+    opacity: 0.7 !important;
+}
+
+/* ============================================
+   Skeleton Loading
+   ============================================ */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* ============================================
+   Accessibility - Focus Visible
+   ============================================ */
+:focus-visible {
+    outline: 2px solid var(--primary, #4a90d9);
+    outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary, #4a90d9);
+    color: white;
+    padding: 8px 16px;
+    z-index: 1000;
+    font-weight: 600;
+    border-radius: 0 0 8px 0;
+    transition: top 0.3s;
+}
+.skip-link:focus {
+    top: 0;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+

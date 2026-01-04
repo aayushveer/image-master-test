@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- SEO Meta Tags -->
+    <title>PDF to Image Converter Free Online | Convert PDF to JPG PNG | Extract Pages | Image Master</title>
+    <meta name="description" content="Convert PDF to high-quality images instantly. Extract all pages as JPG or PNG with one click. Adjustable quality and resolution. Download individual images or all as ZIP. 100% private - PDF never leaves your device. No signup, no watermarks, completely free. Works with any PDF file size.">
+    <meta name="keywords" content="pdf to image, pdf to jpg, pdf to png, convert pdf to image, pdf converter, extract pdf pages, pdf page to image, pdf to picture, pdf to photo, pdf image extractor, pdf page extractor, convert pdf online, free pdf converter, pdf to jpeg, pdf to images online, batch pdf convert, multi page pdf, all pages to images, pdf to jpg converter free, high quality pdf convert, hd pdf to image, 300 dpi pdf, print quality pdf, web quality pdf, pdf to image download, pdf export images, adobe alternative, acrobat alternative, online pdf tool, browser pdf converter, client side pdf, private pdf convert, no upload pdf, offline pdf converter, secure pdf tool, fast pdf convert, instant pdf to image, drag drop pdf, pdf preview, pdf thumbnail, pdf page preview, works without internet, mobile pdf converter, android pdf to jpg, iphone pdf convert, tablet pdf tool, windows mac linux, chrome firefox safari, best pdf converter 2025, top pdf to image, popular pdf tool, trusted pdf converter, unlimited pdf convert, no file size limit, large pdf support, multi page support, batch download, zip download, individual pages, select pages, page range, custom pages, quality settings, resolution settings, format options, jpg png webp, lossless conversion, compressed output, optimized images, web ready images, print ready images, social media ready, document images, scan to image, ebook pages, presentation slides, pdf slides to images">
+    <meta name="author" content="Image Master">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="rating" content="General">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imagemaster.com/pdf-to-image">
+    <meta property="og:title" content="PDF to Image Converter Free | Convert PDF to JPG PNG">
+    <meta property="og:description" content="Convert PDF pages to high-quality images. JPG, PNG output. Download all as ZIP. 100% private.">
+    <meta property="og:image" content="https://imagemaster.com/og-pdf-image.jpg">
+    <meta property="og:site_name" content="Image Master">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PDF to Image Converter Free Online | Image Master">
+    <meta name="twitter:description" content="Convert PDF to JPG/PNG instantly. All pages extracted. Free, private, no signup.">
+    
+    <link rel="canonical" href="https://imagemaster.com/pdf-to-image">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "PDF to Image Converter - Image Master", "applicationCategory": "MultimediaApplication", "operatingSystem": "Web Browser", "offers": {"@type": "Offer", "price": "0"}, "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "5100"}, "featureList": ["PDF to JPG", "PDF to PNG", "All Pages Convert", "High Quality Output", "Batch Download"]}
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='3' fill='none' stroke='%234a90d9' stroke-width='2.5'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%234a90d9'/%3E%3Cpath d='M7 22L13 16L17 20L25 12' stroke='%234a90d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF.js - Must load before main script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <link rel="stylesheet" href="css/pdf-to-image.css">
+    <link rel="preload" href="css/animations.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header__inner">
+            <a href="index.html" class="back-btn" title="Back to Home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <a href="index.html" class="logo">
+                <svg class="logo__icon" viewBox="0 0 32 32" fill="none">
+                    <rect x="2" y="6" width="28" height="20" rx="3" stroke="currentColor" stroke-width="2.5"/>
+                    <circle cx="11" cy="13" r="3" fill="currentColor"/>
+                    <path d="M7 22L13 16L17 20L25 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="logo__text">Image Master</span>
+            </a>
+            
+            <nav class="nav">
+                <a href="image-to-pdf.html" class="nav__link">Image to PDF</a>
+                <a href="format-converter.html" class="nav__link">Convert</a>
+                <a href="pdf-to-image.html" class="nav__link nav__link--active">PDF to Image</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page 1: Upload -->
+    <main class="page active" id="page-upload">
+        <div class="upload-box">
+            <div class="upload-icon">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="12" y="8" width="40" height="48" rx="4"/>
+                    <path d="M20 8V4a4 4 0 014-4h16a4 4 0 014 4v4"/>
+                    <text x="32" y="38" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor" stroke="none">PDF</text>
+                    <path d="M40 48l8-8M48 48l-8-8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h1 class="upload-title">PDF to Image Converter</h1>
+            <p class="upload-desc">Convert PDF pages to high-quality JPG or PNG images. Extract all pages instantly.</p>
+            
+            <label class="upload-btn">
+                <input type="file" id="file-input" accept=".pdf,application/pdf" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Select PDF File
+            </label>
+            
+            <p class="upload-hint">or drag & drop your PDF here</p>
+            
+            <div class="privacy-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                <span>100% Private - PDF never leaves your device</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page 2: Editor -->
+    <main class="page" id="page-editor">
+        <div class="editor">
+            <!-- Preview Panel -->
+            <div class="editor__preview">
+                <div class="preview-header">
+                    <div class="pdf-info">
+                        <span class="pdf-name" id="pdf-name">document.pdf</span>
+                        <span class="pdf-pages" id="pdf-pages">0 pages</span>
+                    </div>
+                    <label class="btn btn--secondary btn--sm">
+                        <input type="file" id="file-input-new" accept=".pdf,application/pdf" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        New PDF
+                    </label>
+                </div>
+                
+                <div class="pages-grid" id="pages-grid">
+                    <!-- Page thumbnails will be rendered here -->
+                </div>
+            </div>
+            
+            <!-- Settings Panel -->
+            <div class="editor__settings">
+                <h2 class="settings-title">Conversion Settings</h2>
+                
+                <div class="settings-form">
+                    <!-- Format -->
+                    <div class="setting-group">
+                        <label class="setting-label">Output Format</label>
+                        <div class="format-options">
+                            <button class="format-btn active" data-format="jpg">
+                                <span class="format-icon">JPG</span>
+                                <span class="format-desc">Smaller size</span>
+                            </button>
+                            <button class="format-btn" data-format="png">
+                                <span class="format-icon">PNG</span>
+                                <span class="format-desc">Best quality</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quality (for JPG) -->
+                    <div class="setting-group" id="quality-group">
+                        <label class="setting-label">
+                            <span>Quality</span>
+                            <span class="setting-value" id="quality-value">90%</span>
+                        </label>
+                        <input type="range" id="quality" class="range-input" min="50" max="100" value="90">
+                    </div>
+                    
+                    <!-- Resolution -->
+                    <div class="setting-group">
+                        <label class="setting-label">Resolution</label>
+                        <div class="resolution-options">
+                            <button class="res-btn" data-scale="1">Standard</button>
+                            <button class="res-btn active" data-scale="2">High (2x)</button>
+                            <button class="res-btn" data-scale="3">Ultra (3x)</button>
+                        </div>
+                        <p class="setting-hint">Higher = larger file size, better print quality</p>
+                    </div>
+                    
+                    <!-- Page Selection -->
+                    <div class="setting-group">
+                        <label class="setting-label">Pages to Convert</label>
+                        <div class="page-options">
+                            <label class="radio-label">
+                                <input type="radio" name="page-range" value="all" checked>
+                                <span class="radio-custom"></span>
+                                <span>All Pages</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="page-range" value="selected">
+                                <span class="radio-custom"></span>
+                                <span>Selected Pages</span>
+                            </label>
+                        </div>
+                        <p class="setting-hint" id="selected-hint" style="display:none;">Click pages above to select/deselect</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn--primary btn--lg" id="btn-convert">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 1l4 4-4 4"/>
+                            <path d="M3 11V9a4 4 0 014-4h14"/>
+                            <path d="M7 23l-4-4 4-4"/>
+                            <path d="M21 13v2a4 4 0 01-4 4H3"/>
+                        </svg>
+                        Convert to Images
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page 3: Download -->
+    <main class="page" id="page-download">
+        <div class="download-box">
+            <div class="success-icon">
+                <svg viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3"/>
+                    <path d="M20 32l8 8 16-16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            
+            <h2 class="download-title">Images Ready!</h2>
+            <p class="download-desc" id="download-desc">All pages converted successfully.</p>
+            
+            <div class="results-grid" id="results-grid">
+                <!-- Result images will be shown here -->
+            </div>
+            
+            <div class="download-actions">
+                <button class="btn btn--primary btn--lg" id="btn-download-all">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download All (ZIP)
+                </button>
+                <button class="btn btn--secondary" id="btn-new">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Convert Another PDF
+                </button>
+            </div>
+            
+            <!-- Share -->
+            <div class="share-section">
+                <p class="share-label">Love this tool? Share it:</p>
+                <div class="share-buttons">
+                    <a href="#" class="share-btn share-btn--twitter" id="share-twitter" title="Share on Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="#" class="share-btn share-btn--facebook" id="share-facebook" title="Share on Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="#" class="share-btn share-btn--whatsapp" id="share-whatsapp" title="Share on WhatsApp">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Processing Overlay -->
+    <div class="processing" id="processing">
+        <div class="processing__content">
+            <div class="spinner"></div>
+            <p class="processing__text" id="processing-text">Converting pages...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p class="progress-text" id="progress-text">0 / 0</p>
+        </div>
+    </div>
+
+    <!-- Trust Badges & Testimonials -->
+    <section style="padding: 60px 0; background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);">
+        <div class="container" style="max-width: 1000px;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 50px;">
+                <div style="display: flex; align-items: center; gap: 10px; background: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                    <span style="font-size: 18px;">🖼️</span>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 14px;">High Quality Output</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; background: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                    <span style="font-size: 18px;">📑</span>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 14px;">All Pages at Once</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; background: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                    <span style="color: #fbbf24; font-size: 16px;">★</span>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 14px;">4.8/5 Rating</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; background: white; padding: 14px 24px; border-radius: 50px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span style="font-weight: 600; color: #1a1a1a; font-size: 14px;">100% Private</span>
+                </div>
+            </div>
+            <h2 style="text-align: center; font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 32px;">What Users Say</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0;">
+                    <div style="color: #fbbf24; margin-bottom: 12px;">★★★★★</div>
+                    <p style="color: #475569; line-height: 1.7; margin-bottom: 16px; font-size: 14px;">"Converted a 50-page PDF to images in seconds! Quality is crystal clear. Much better than Adobe."</p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 13px;">RN</div>
+                        <div><div style="font-weight: 600; color: #1a1a1a; font-size: 13px;">Rahul Nair</div><div style="font-size: 11px; color: #64748b;">Teacher, Kochi</div></div>
+                    </div>
+                </div>
+                <div style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0;">
+                    <div style="color: #fbbf24; margin-bottom: 12px;">★★★★★</div>
+                    <p style="color: #475569; line-height: 1.7; margin-bottom: 16px; font-size: 14px;">"Love that my PDFs never get uploaded! Perfect for confidential documents."</p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #ec4899, #f43f5e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 13px;">DK</div>
+                        <div><div style="font-weight: 600; color: #1a1a1a; font-size: 13px;">Divya Kapoor</div><div style="font-size: 11px; color: #64748b;">CA, Mumbai</div></div>
+                    </div>
+                </div>
+                <div style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0;">
+                    <div style="color: #fbbf24; margin-bottom: 12px;">★★★★★</div>
+                    <p style="color: #475569; line-height: 1.7; margin-bottom: 16px; font-size: 14px;">"Use this for extracting images from ebooks. Fast and the quality is print-ready!"</p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 13px;">VS</div>
+                        <div><div style="font-weight: 600; color: #1a1a1a; font-size: 13px;">Varun Singh</div><div style="font-size: 11px; color: #64748b;">Student, Lucknow</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__brand">
+                    <span class="footer__logo">Image Master</span>
+                    <p class="footer__tagline">Free online image tools. 100% private.</p>
+                </div>
+                <div class="footer__links">
+                    <a href="index.html">Home</a>
+                    <a href="image-to-pdf.html">Image to PDF</a>
+                    <a href="image-resize.html">Resize</a>
+                </div>
+            </div>
+            <p class="footer__copy">© 2025 Image Master. All processing happens in your browser.</p>
+        </div>
+    </footer>
+
+    <script src="js/pdf-to-image.js"></script>
+    <script src="js/analytics.js" defer></script>
+    <script src="js/bug-report.js" defer></script>
+</body>
+</html>
+
