@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>Image Master – Free Online Image Tools | Resize, Compress, Convert & Edit Photos | Best Free Image Editor 2025</title>
+    <title>Image Master – Free Online Image Tools | Resize, Compress, Convert & Edit Photos | Best Free Image Editor 2026</title>
     <meta name="description" content="Image Master is the ultimate free online image toolkit. Resize, compress, crop, convert, and edit photos instantly in your browser. 100% private processing - your images never leave your device. No signup, no watermarks, no limits. Features include background remover, passport photo maker, PDF converter, collage creator, screenshot beautifier, watermark tool, and format converter. Fast, secure, and completely free forever.">
-    <meta name="keywords" content="image master, free image tools, online image editor, resize image online, compress image online, image compressor, photo resizer, reduce image size, image optimizer, batch image resize, bulk image compress, image size reducer, photo compress, jpg compressor, png compressor, webp converter, image format converter, convert jpg to png, convert png to jpg, heic to jpg, image to pdf converter, jpg to pdf, png to pdf, multiple images to pdf, photo to pdf, passport photo maker, passport size photo, id photo generator, visa photo maker, 2x2 photo, 35x45mm photo, background remover, remove bg, remove background online, transparent background, ai background remover, photo background eraser, image crop tool, crop photo online, aspect ratio crop, circle crop, square crop, photo collage maker, collage online, photo grid, picture collage, screenshot beautifier, screenshot mockup, browser mockup, device mockup, add watermark online, watermark images, logo watermark, text watermark, batch watermark, image size increaser, increase image kb, enlarge image, upscale image, image reducer, reduce file size, compress jpeg, reduce kb, whatsapp chat to pdf, chat screenshot to pdf, free photo editor, no signup image tool, private image processing, secure image editor, client side processing, browser based image tool, no upload image editor, offline image tool, fast image resize, quick compress, instant image edit, bulk photo editor, multiple image processor, drag drop image tool, free forever, no watermark, unlimited use, mobile friendly image tool, responsive image editor, touch friendly, works on phone, tablet image editor, desktop image tool, cross platform, all browsers supported, chrome image tool, firefox image editor, safari compatible, edge browser tool, lightweight image tool, fast loading, instant processing, real time preview, high quality output, lossless compression, quality preserve, professional results, print ready, web optimized, social media size, instagram size, facebook photo size, twitter image, linkedin image size, youtube thumbnail, blog image optimizer, wordpress image tool, ecommerce product photos, amazon listing images, ebay photo resize, etsy image optimizer, best image tool 2025, top free image editor, most popular image resize, trusted image compressor, secure photo tool, gdpr compliant, privacy focused, data protection, no server upload, local processing only">
+    <meta name="keywords" content="image master, free image tools, online image editor, resize image online, compress image online, image compressor, photo resizer, reduce image size, image optimizer, batch image resize, bulk image compress, image size reducer, photo compress, jpg compressor, png compressor, webp converter, image format converter, convert jpg to png, convert png to jpg, heic to jpg, image to pdf converter, jpg to pdf, png to pdf, multiple images to pdf, photo to pdf, passport photo maker, passport size photo, id photo generator, visa photo maker, 2x2 photo, 35x45mm photo, background remover, remove bg, remove background online, transparent background, ai background remover, photo background eraser, image crop tool, crop photo online, aspect ratio crop, circle crop, square crop, photo collage maker, collage online, photo grid, picture collage, screenshot beautifier, screenshot mockup, browser mockup, device mockup, add watermark online, watermark images, logo watermark, text watermark, batch watermark, image size increaser, increase image kb, enlarge image, upscale image, image reducer, reduce file size, compress jpeg, reduce kb, whatsapp chat to pdf, chat screenshot to pdf, free photo editor, no signup image tool, private image processing, secure image editor, client side processing, browser based image tool, no upload image editor, offline image tool, fast image resize, quick compress, instant image edit, bulk photo editor, multiple image processor, drag drop image tool, free forever, no watermark, unlimited use, mobile friendly image tool, responsive image editor, touch friendly, works on phone, tablet image editor, desktop image tool, cross platform, all browsers supported, chrome image tool, firefox image editor, safari compatible, edge browser tool, lightweight image tool, fast loading, instant processing, real time preview, high quality output, lossless compression, quality preserve, professional results, print ready, web optimized, social media size, instagram size, facebook photo size, twitter image, linkedin image size, youtube thumbnail, blog image optimizer, wordpress image tool, ecommerce product photos, amazon listing images, ebay photo resize, etsy image optimizer, best image tool 2026, top free image editor, most popular image resize, trusted image compressor, secure photo tool, gdpr compliant, privacy focused, data protection, no server upload, local processing only">
     <meta name="author" content="Image Master">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
@@ -472,6 +472,21 @@
 
         .footer__bottom p { font-size: 13px; color: #475569; }
 
+        /* FAQ Section */
+        .faq { padding: 60px 0; background: var(--bg-light); }
+        .faq__container { max-width: 800px; margin: 0 auto; }
+        .faq__item { background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .faq__summary { font-weight: 600; cursor: pointer; color: var(--text); list-style: none; }
+        .faq__summary::-webkit-details-marker { display: none; }
+        .faq__answer { margin-top: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Trust Section */
+        .trust { padding: 50px 0; background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%); text-align: center; }
+        .trust__title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
+        .trust__text { color: var(--text-secondary); max-width: 700px; margin: 0 auto 30px; line-height: 1.7; }
+        .trust__badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 14px; }
+        .trust__badge { background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500; }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero { padding: 60px 0 40px; }
@@ -483,9 +498,32 @@
             .footer__logo { justify-content: center; }
         }
     </style>
-    <!-- Deferred Animations CSS for faster FCP -->
-    <link rel="preload" href="css/animations.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/animations.css"></noscript>
+    <!-- Focus Visible Styles for Accessibility -->
+    <style>
+        /* Focus styles for keyboard navigation */
+        a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+        /* Remove default focus for mouse users */
+        a:focus:not(:focus-visible), button:focus:not(:focus-visible) {
+            outline: none;
+        }
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --text-secondary: #1e293b;
+                --border: #475569;
+            }
+        }
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Skip to Main Content Link for Accessibility -->
@@ -559,17 +597,17 @@
     </section>
 
     <!-- Tools -->
-    <section class="tools">
+    <section class="tools" aria-labelledby="tools-title">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Image Tools</h2>
+                <h2 id="tools-title" class="section-title">Image Tools</h2>
                 <p class="section-subtitle">Professional tools that run entirely in your browser</p>
             </div>
             
             <div class="tools__grid">
-                <a href="passport-photo.html" class="tool-card">
-                    <div class="tool-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <a href="passport-photo.html" class="tool-card" aria-label="Passport Photo Maker - Create passport, Aadhaar, PAN photos">
+                    <div class="tool-card__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="3" y="2" width="18" height="20" rx="2"/>
                             <circle cx="12" cy="10" r="4"/>
                             <path d="M6 18c0-3 2.7-5 6-5s6 2 6 5"/>
@@ -577,9 +615,9 @@
                     </div>
                     <h3 class="tool-card__title">Passport Photo Maker</h3>
                     <p class="tool-card__desc">Passport, Aadhaar, PAN, Voter ID, Exams. Print 8/12/16/20 photos on A4. Save ₹100-200!</p>
-                    <span class="tool-card__link">
+                    <span class="tool-card__link" aria-hidden="true">
                         Use Tool
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </span>
@@ -827,10 +865,10 @@
     </section>
 
     <!-- Features -->
-    <section class="features">
+    <section class="features" aria-labelledby="features-title">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Why Image Master?</h2>
+                <h2 id="features-title" class="section-title">Why Image Master?</h2>
                 <p class="section-subtitle">Built for privacy, speed, and simplicity</p>
             </div>
             
@@ -881,13 +919,13 @@
     </section>
 
     <!-- Privacy -->
-    <section class="privacy">
+    <section class="privacy" aria-labelledby="privacy-title">
         <div class="container">
-            <svg class="privacy__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="privacy__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 <path d="M9 12l2 2 4-4"/>
             </svg>
-            <h2 class="privacy__title">Your Privacy is Guaranteed</h2>
+            <h2 id="privacy-title" class="privacy__title">Your Privacy is Guaranteed</h2>
             <p class="privacy__text">
                 All image processing happens entirely in your browser. 
                 Nothing is uploaded. Nothing is stored. Your files stay on your device.
@@ -896,57 +934,57 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq" style="padding: 60px 0; background: var(--bg-light);">
+    <section class="faq" aria-labelledby="faq-title">
         <div class="container">
-            <div class="section-header" style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Frequently Asked Questions</h2>
-                <p style="color: var(--text-secondary);">Everything you need to know about Image Master</p>
+            <div class="section-header">
+                <h2 id="faq-title" class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Everything you need to know about Image Master</p>
             </div>
             
-            <div style="max-width: 800px; margin: 0 auto;">
-                <details style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border);">
-                    <summary style="font-weight: 600; cursor: pointer; color: var(--text);">Is Image Master really free? Kya ye free hai?</summary>
-                    <p style="margin-top: 12px; color: var(--text-secondary); line-height: 1.6;">Yes, Image Master is 100% FREE forever. No hidden fees, no premium plans, no subscriptions. All tools are completely free to use without any limits. Students, job seekers, और सभी लोग free में use कर सकते हैं।</p>
+            <div class="faq__container">
+                <details class="faq__item">
+                    <summary class="faq__summary">Is Image Master really free? Kya ye free hai?</summary>
+                    <p class="faq__answer">Yes, Image Master is 100% FREE forever. No hidden fees, no premium plans, no subscriptions. All tools are completely free to use without any limits. Students, job seekers, और सभी लोग free में use कर सकते हैं।</p>
                 </details>
                 
-                <details style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border);">
-                    <summary style="font-weight: 600; cursor: pointer; color: var(--text);">Are my images uploaded to any server? क्या मेरी photos upload होती हैं?</summary>
-                    <p style="margin-top: 12px; color: var(--text-secondary); line-height: 1.6;">No, your images NEVER leave your device. All processing happens locally in your browser. We don't have servers to store your images. आपकी privacy 100% guaranteed है - कोई भी आपकी photos नहीं देख सकता।</p>
+                <details class="faq__item">
+                    <summary class="faq__summary">Are my images uploaded to any server? क्या मेरी photos upload होती हैं?</summary>
+                    <p class="faq__answer">No, your images NEVER leave your device. All processing happens locally in your browser. We don't have servers to store your images. आपकी privacy 100% guaranteed है - कोई भी आपकी photos नहीं देख सकता।</p>
                 </details>
                 
-                <details style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border);">
-                    <summary style="font-weight: 600; cursor: pointer; color: var(--text);">Does it work on mobile? क्या mobile पर काम करता है?</summary>
-                    <p style="margin-top: 12px; color: var(--text-secondary); line-height: 1.6;">Yes! Image Master works perfectly on all devices - Android phones, iPhones, tablets, laptops, और desktop computers. Slow internet पर भी fast काम करता है।</p>
+                <details class="faq__item">
+                    <summary class="faq__summary">Does it work on mobile? क्या mobile पर काम करता है?</summary>
+                    <p class="faq__answer">Yes! Image Master works perfectly on all devices - Android phones, iPhones, tablets, laptops, और desktop computers. Slow internet पर भी fast काम करता है।</p>
                 </details>
                 
-                <details style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border);">
-                    <summary style="font-weight: 600; cursor: pointer; color: var(--text);">Can I use it for government forms? Sarkari forms के लिए use कर सकते हैं?</summary>
-                    <p style="margin-top: 12px; color: var(--text-secondary); line-height: 1.6;">Absolutely! Perfect for passport photos, Aadhaar, PAN card, Voter ID, SSC, UPSC, Bank exams, NEET, JEE, school admissions, visa applications, और सभी government forms। Cyber cafe जाने की जरूरत नहीं!</p>
+                <details class="faq__item">
+                    <summary class="faq__summary">Can I use it for government forms? Sarkari forms के लिए use कर सकते हैं?</summary>
+                    <p class="faq__answer">Absolutely! Perfect for passport photos, Aadhaar, PAN card, Voter ID, SSC, UPSC, Bank exams, NEET, JEE, school admissions, visa applications, और सभी government forms। Cyber cafe जाने की जरूरत नहीं!</p>
                 </details>
                 
-                <details style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border);">
-                    <summary style="font-weight: 600; cursor: pointer; color: var(--text);">Is login/signup required? Login करना पड़ेगा?</summary>
-                    <p style="margin-top: 12px; color: var(--text-secondary); line-height: 1.6;">No login, no signup, no email required! Just open the website and start using. कोई account बनाने की जरूरत नहीं। Direct use करो।</p>
+                <details class="faq__item">
+                    <summary class="faq__summary">Is login/signup required? Login करना पड़ेगा?</summary>
+                    <p class="faq__answer">No login, no signup, no email required! Just open the website and start using. कोई account बनाने की जरूरत नहीं। Direct use करो।</p>
                 </details>
             </div>
         </div>
     </section>
 
     <!-- India Trust Section -->
-    <section style="padding: 50px 0; background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);">
-        <div class="container" style="text-align: center;">
-            <h2 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 20px;">🇮🇳 Made for India, Used Worldwide</h2>
-            <p style="color: var(--text-secondary); max-width: 700px; margin: 0 auto 30px; line-height: 1.7;">
+    <section class="trust" aria-labelledby="trust-title">
+        <div class="container">
+            <h2 id="trust-title" class="trust__title">🇮🇳 Made for India, Used Worldwide</h2>
+            <p class="trust__text">
                 Trusted by <strong>lakhs of students</strong>, job seekers, government employees, और professionals across India. 
                 Perfect for <strong>Aadhar, PAN, Passport, Visa applications</strong>, competitive exams, और daily image editing needs.
                 <strong>No cyber cafe needed</strong> - do everything from your phone!
             </p>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 14px;">
-                <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500;">✓ Works Offline</span>
-                <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500;">✓ Low Data Usage</span>
-                <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500;">✓ Mobile Friendly</span>
-                <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500;">✓ No Registration</span>
-                <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #1e293b; font-weight: 500;">✓ 100% Free</span>
+            <div class="trust__badges" role="list">
+                <span class="trust__badge" role="listitem">✓ Works Offline</span>
+                <span class="trust__badge" role="listitem">✓ Low Data Usage</span>
+                <span class="trust__badge" role="listitem">✓ Mobile Friendly</span>
+                <span class="trust__badge" role="listitem">✓ No Registration</span>
+                <span class="trust__badge" role="listitem">✓ 100% Free</span>
             </div>
         </div>
     </section>
@@ -960,7 +998,7 @@
             <div class="footer__grid">
                 <div class="footer__brand">
                     <div class="footer__logo">
-                        <svg class="logo__icon" viewBox="0 0 32 32" fill="none" width="24" height="24">
+                        <svg class="logo__icon" viewBox="0 0 32 32" fill="none" width="24" height="24" aria-hidden="true">
                             <rect x="2" y="6" width="28" height="20" rx="3" stroke="currentColor" stroke-width="2.5"/>
                             <circle cx="11" cy="13" r="3" fill="currentColor"/>
                             <path d="M7 22L13 16L17 20L25 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -969,20 +1007,20 @@
                     </div>
                     <p class="footer__tagline">Free online image tools. 100% private processing.</p>
                 </div>
-                <div class="footer__links">
-                    <h3>Popular Tools</h3>
+                <nav class="footer__links" aria-label="Popular tools navigation">
+                    <h3 id="popular-tools">Popular Tools</h3>
                     <a href="passport-photo.html">Passport Photo</a>
                     <a href="image-resize.html">Image Resize</a>
                     <a href="image-compress.html">Image Compress</a>
                     <a href="image-to-pdf.html">Image to PDF</a>
-                </div>
-                <div class="footer__links">
-                    <h3>More Tools</h3>
-                    <a href="passport-photo.html">Passport Photo</a>
+                </nav>
+                <nav class="footer__links" aria-label="More tools navigation">
+                    <h3 id="more-tools">More Tools</h3>
+                    <a href="dp-resizer.html">DP Resizer</a>
                     <a href="photo-collage.html">Photo Collage</a>
                     <a href="format-converter.html">Format Converter</a>
                     <a href="color-palette.html">Color Palette</a>
-                </div>
+                </nav>
             </div>
             <div class="footer__bottom">
                 <p>&copy; 2026 Image Master. All rights reserved. All processing is done locally in your browser.</p>
@@ -990,8 +1028,21 @@
         </div>
     </footer>
     
-    <!-- Deferred Scripts for Better Performance -->
-    <script src="js/analytics.js" defer></script>
-    <script src="js/bug-report.js" defer></script>
+    <!-- Scripts loaded only if they exist -->
+    <script>
+        // Error-free script loading
+        function loadScript(src) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.defer = true;
+            s.onerror = function() { console.log('Optional script not loaded: ' + src); };
+            document.body.appendChild(s);
+        }
+        // Load optional scripts
+        if (typeof window !== 'undefined') {
+            loadScript('js/analytics.js');
+            loadScript('js/bug-report.js');
+        }
+    </script>
 </body>
 </html>
