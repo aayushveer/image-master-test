@@ -49,6 +49,8 @@ const App = {
             resolutionInput: document.getElementById('resolution-input'),
             formatSelect: document.getElementById('format-select'),
             qualityInput: document.getElementById('quality-input'),
+            qualitySlider: document.getElementById('quality-slider'),
+            qualityDisplay: document.getElementById('quality-display'),
             bgBtns: document.querySelectorAll('.bg-btn'),
             
             btnResize: document.getElementById('btn-resize'),
@@ -116,9 +118,17 @@ const App = {
             this.format = e.target.value;
         });
         
-        // Quality
+        // Quality (slider and hidden input)
+        this.el.qualitySlider?.addEventListener('input', (e) => {
+            this.quality = parseInt(e.target.value) || 90;
+            if (this.el.qualityInput) this.el.qualityInput.value = this.quality;
+            if (this.el.qualityDisplay) this.el.qualityDisplay.textContent = this.quality + '%';
+        });
+        
         this.el.qualityInput?.addEventListener('input', (e) => {
             this.quality = parseInt(e.target.value) || 90;
+            if (this.el.qualitySlider) this.el.qualitySlider.value = this.quality;
+            if (this.el.qualityDisplay) this.el.qualityDisplay.textContent = this.quality + '%';
         });
         
         // Background

@@ -210,78 +210,79 @@
             
             <!-- Settings Panel -->
             <div class="editor__settings">
-                <h2 class="settings-title">Choose new size and format</h2>
+                <h2 class="settings-title">Resize Settings</h2>
                 
                 <div class="settings-form">
-                    <!-- Width & Height Row -->
-                    <div class="dimension-row">
-                        <div class="dim-group">
-                            <label>Width</label>
-                            <input type="number" id="width-input" value="800" min="1">
-                        </div>
-                        
-                        <button class="lock-btn active" id="lock-btn" title="Lock aspect ratio">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0110 0v4"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="dimension-row">
-                        <div class="dim-group">
-                            <label>Height</label>
-                            <input type="number" id="height-input" value="70" min="1">
-                        </div>
-                    </div>
-                    
-                    <div class="dimension-row">
-                        <div class="unit-select">
-                            <label>Unit</label>
-                            <select id="unit-select">
-                                <option value="pixels" selected>Pixels</option>
-                                <option value="percent">Percent</option>
-                                <option value="cm">Centimeters</option>
-                                <option value="inches">Inches</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Resolution -->
-                    <div class="setting-row">
-                        <label>Resolution</label>
-                        <div class="input-with-suffix">
-                            <input type="number" id="resolution-input" value="72" min="1" max="600">
-                            <span class="suffix">DPI</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Format & Quality Row -->
-                    <div class="two-col-row">
-                        <div class="col">
-                            <label>Format</label>
-                            <select id="format-select">
-                                <option value="jpg" selected>JPG</option>
-                                <option value="png">PNG</option>
-                                <option value="webp">WebP</option>
-                                <option value="gif">GIF</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label>Quality</label>
-                            <div class="input-with-suffix">
-                                <input type="number" id="quality-input" value="90" min="10" max="100">
-                                <span class="suffix">%</span>
+                    <!-- Dimensions Section -->
+                    <div class="settings-section">
+                        <div class="section-label">Dimensions</div>
+                        <div class="dimension-grid">
+                            <div class="dim-field">
+                                <label for="width-input">Width</label>
+                                <input type="number" id="width-input" value="800" min="1">
+                            </div>
+                            <button class="lock-btn active" id="lock-btn" title="Lock aspect ratio">
+                                <svg class="lock-icon locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0110 0v4"/>
+                                </svg>
+                                <svg class="lock-icon unlocked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 019.9-1"/>
+                                </svg>
+                            </button>
+                            <div class="dim-field">
+                                <label for="height-input">Height</label>
+                                <input type="number" id="height-input" value="600" min="1">
                             </div>
                         </div>
-                        <div class="col">
-                            <label>Background</label>
+                        <div class="unit-row">
+                            <select id="unit-select">
+                                <option value="pixels" selected>Pixels (px)</option>
+                                <option value="percent">Percentage (%)</option>
+                                <option value="cm">Centimeters (cm)</option>
+                                <option value="inches">Inches (in)</option>
+                            </select>
+                            <div class="resolution-field">
+                                <input type="number" id="resolution-input" value="72" min="1" max="600">
+                                <span class="unit-label">DPI</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Output Settings -->
+                    <div class="settings-section">
+                        <div class="section-label">Output</div>
+                        <div class="output-grid">
+                            <div class="output-field">
+                                <label for="format-select">Format</label>
+                                <select id="format-select">
+                                    <option value="jpg" selected>JPG</option>
+                                    <option value="png">PNG</option>
+                                    <option value="webp">WebP</option>
+                                    <option value="gif">GIF</option>
+                                </select>
+                            </div>
+                            <div class="output-field">
+                                <label for="quality-input">Quality</label>
+                                <div class="quality-input-wrap">
+                                    <input type="range" id="quality-slider" min="10" max="100" value="90">
+                                    <span class="quality-value" id="quality-display">90%</span>
+                                </div>
+                                <input type="hidden" id="quality-input" value="90">
+                            </div>
+                        </div>
+                        <div class="bg-row">
+                            <span class="bg-label">Background</span>
                             <div class="bg-options">
-                                <button class="bg-btn active" data-bg="white" title="White">
+                                <button class="bg-btn active" data-bg="white" title="White background">
                                     <span class="bg-circle white"></span>
                                 </button>
-                                <button class="bg-btn" data-bg="black" title="Black">
+                                <button class="bg-btn" data-bg="black" title="Black background">
                                     <span class="bg-circle black"></span>
+                                </button>
+                                <button class="bg-btn" data-bg="transparent" title="Transparent (PNG only)">
+                                    <span class="bg-circle transparent"></span>
                                 </button>
                             </div>
                         </div>
@@ -476,7 +477,7 @@
         function copyLink() { navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }
     </script>
     <script src="js/resize-v4.js"></script>
-    <script src="js/analytics.js" defer></script>
+    
     <script src="js/bug-report.js" defer></script>
 </body>
 </html>
