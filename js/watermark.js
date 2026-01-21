@@ -11,7 +11,7 @@ const App = {
     logoImage: null,
     settings: {
         type: 'text',
-        text: '© Image Master',
+        text: '© Image Runner',
         fontFamily: 'Inter, sans-serif',
         fontSize: 48,
         fontColor: '#ffffff',

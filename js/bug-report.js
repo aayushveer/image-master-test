@@ -1,6 +1,6 @@
 /**
  * BUG-REPORT.JS - Floating Bug Report Button with Popup
- * Image Master - Report issues without leaving the page
+ * Image Runner - Report issues without leaving the page
  */
 
 (function() {

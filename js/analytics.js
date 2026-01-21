@@ -1,4 +1,4 @@
 // Analytics placeholder - no tracking
-console.log('Image Master - Privacy First: No analytics tracking');
+console.log('Image Runner - Privacy First: No analytics tracking');
 
 

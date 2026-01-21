@@ -1,5 +1,5 @@
 /**
- * Photo Collage Maker - Image Master
+ * Photo Collage Maker - Image Runner
  * 100% Client-side, Free, No Watermark
  */
 

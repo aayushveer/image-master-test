@@ -1,4 +1,4 @@
-# Image Master Robots.txt
+# Image Runner Robots.txt
 # https://imagemaster.com
 # Last Updated: 2025-01-01
 
