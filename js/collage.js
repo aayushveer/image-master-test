@@ -326,10 +326,10 @@ const CollageApp = {
             // Save state for clipping
             ctx.save();
             
-            // Create rounded rect path
+            // Create rounded rect path (with polyfill for older browsers)
             if (this.radius > 0) {
                 ctx.beginPath();
-                ctx.roundRect(x, y, w, h, this.radius);
+                this.drawRoundedRect(ctx, x, y, w, h, this.radius);
                 ctx.clip();
             }
             
@@ -369,6 +369,18 @@ const CollageApp = {
         link.download = `collage-${Date.now()}.png`;
         link.href = this.resultDataUrl;
         link.click();
+    },
+    
+    // Polyfill for rounded rect (Safari compatibility)
+    drawRoundedRect(ctx, x, y, w, h, r) {
+        if (w < 2 * r) r = w / 2;
+        if (h < 2 * r) r = h / 2;
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
     },
     
     reset() {

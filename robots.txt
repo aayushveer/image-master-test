@@ -1,6 +1,6 @@
 # Image Runner Robots.txt
-# https://imagemaster.com
-# Last Updated: 2025-01-01
+# https://www.imgrunner.com
+# Last Updated: 2026-01-21
 
 # Allow all crawlers
 User-agent: *
@@ -10,7 +10,7 @@ Allow: /
 Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://imagemaster.com/sitemap.xml
+Sitemap: https://www.imgrunner.com/sitemap.xml
 
 # Block admin pages
 Disallow: /admin-panel.html
