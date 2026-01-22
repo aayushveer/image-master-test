@@ -120,10 +120,6 @@
         .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; }
         .related-link { background: white; padding: 15px 20px; border-radius: 10px; text-decoration: none; color: #25D366; font-weight: 500; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
         .related-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,211,102,0.2); }
-        .platform-badge { background: linear-gradient(135deg, #25D366, #128C7E); color: white; font-size: 2.5rem; font-weight: 800; padding: 20px 40px; border-radius: 16px; display: inline-block; margin: 20px 0; }
-        .size-info { background: white; border: 2px solid #25D366; border-radius: 16px; padding: 30px; margin: 30px auto; max-width: 400px; text-align: center; }
-        .size-info .size { font-size: 3rem; font-weight: 800; color: #25D366; }
-        .size-info .label { color: #64748b; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -156,17 +152,11 @@
     <main class="page active" id="page-upload">
         <div class="container">
             <div class="upload-box">
-                <div class="platform-badge">📱 WhatsApp</div>
                 <h1 class="upload-title">WhatsApp DP Size Maker</h1>
                 <p class="upload-desc">
                     Create perfect <span class="highlight">500x500 pixel</span> WhatsApp profile picture.<br>
                     Fit full photo without cropping. HD quality, instant download.
                 </p>
-                
-                <div class="size-info">
-                    <div class="size">500 × 500</div>
-                    <div class="label">pixels (square)</div>
-                </div>
                 
                 <div class="dropzone" id="dropzone">
                     <label class="upload-btn">
@@ -175,10 +165,6 @@
                     </label>
                     <p class="upload-hint">or drop photo here</p>
                 </div>
-                
-                <p style="margin-top: 20px; color: #64748b; font-size: 0.9rem;">
-                    ✓ No Crop Option &nbsp; ✓ HD Quality &nbsp; ✓ Works Offline
-                </p>
             </div>
         </div>
     </main>

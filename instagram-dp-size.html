@@ -115,10 +115,6 @@
         .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; }
         .related-link { background: white; padding: 15px 20px; border-radius: 10px; text-decoration: none; color: #E1306C; font-weight: 500; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
         .related-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(225,48,108,0.2); }
-        .platform-badge { background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); color: white; font-size: 2.5rem; font-weight: 800; padding: 20px 40px; border-radius: 16px; display: inline-block; margin: 20px 0; }
-        .size-info { background: white; border: 2px solid #E1306C; border-radius: 16px; padding: 30px; margin: 30px auto; max-width: 400px; text-align: center; }
-        .size-info .size { font-size: 3rem; font-weight: 800; background: linear-gradient(45deg, #833AB4, #E1306C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .size-info .label { color: #64748b; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -151,17 +147,11 @@
     <main class="page active" id="page-upload">
         <div class="container">
             <div class="upload-box">
-                <div class="platform-badge">📸 Instagram</div>
                 <h1 class="upload-title">Instagram DP Size Maker</h1>
                 <p class="upload-desc">
                     Create perfect <span class="highlight">1080x1080 pixel</span> Instagram profile picture.<br>
                     HD quality for the best looking profile. Fit full photo option.
                 </p>
-                
-                <div class="size-info">
-                    <div class="size">1080 × 1080</div>
-                    <div class="label">pixels (HD square)</div>
-                </div>
                 
                 <div class="dropzone" id="dropzone">
                     <label class="upload-btn">
@@ -170,10 +160,6 @@
                     </label>
                     <p class="upload-hint">or drop photo here</p>
                 </div>
-                
-                <p style="margin-top: 20px; color: #64748b; font-size: 0.9rem;">
-                    ✓ HD Quality &nbsp; ✓ No Crop Option &nbsp; ✓ Works Offline
-                </p>
             </div>
         </div>
     </main>
