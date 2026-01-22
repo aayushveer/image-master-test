@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- SEO Meta Tags -->
-    <title>Color Palette Extractor Free Online | Extract Colors from Image | Get Hex Codes | Image Runner</title>
+    <title>Color Picker Free Online | Pick Exact Colors from Image | Get Hex Codes | Image Runner</title>
     <meta name="description" content="Extract beautiful color palettes from any image instantly. Get HEX, RGB, HSL color codes with one click. Perfect for designers, artists, developers, and creative professionals. Generate 5-10 dominant colors, copy codes instantly, download palette as PNG. 100% private - images never leave your device. No signup, completely free.">
     <meta name="keywords" content="color palette extractor, extract colors from image, image color picker, get colors from photo, color scheme generator, dominant colors, color palette generator, hex color extractor, rgb color picker, hsl color codes, image color analysis, photo color palette, picture colors, design colors, brand colors, color inspiration, color scheme from image, palette from photo, color extraction tool, automatic color palette, ai color picker, smart color detection, gradient colors, complementary colors, color harmony, designer tool, artist tool, developer tool, web design colors, ui colors, ux colors, branding colors, logo colors, marketing colors, social media colors, instagram palette, pinterest colors, dribbble colors, behance colors, adobe color alternative, coolors alternative, canva color picker, figma color tool, photoshop eyedropper, free color tool, online color extractor, browser color picker, client side processing, private color tool, no upload, works offline, copy hex code, copy rgb, copy hsl, download palette, export colors, save palette, palette image, color swatch, color grid, best color extractor 2025, top palette generator">
     <meta name="author" content="Image Runner">
@@ -67,9 +67,9 @@
             </a>
             
             <nav class="nav">
+                <a href="color-palette.html" class="nav__link nav__link--active">Picker</a>
+                <a href="color-palette-pro.html" class="nav__link">Pro</a>
                 <a href="format-converter.html" class="nav__link">Convert</a>
-                <a href="image-resize.html" class="nav__link">Resize</a>
-                <a href="color-palette.html" class="nav__link nav__link--active">Palette</a>
             </nav>
         </div>
     </header>
@@ -86,8 +86,8 @@
                     <circle cx="32" cy="32" r="6" fill="#FFEAA7"/>
                 </svg>
             </div>
-            <h1 class="upload-title">Color Palette Extractor</h1>
-            <p class="upload-desc">Extract beautiful color palettes from any image. Get HEX, RGB & HSL codes instantly.</p>
+            <h1 class="upload-title">Color Picker</h1>
+            <p class="upload-desc">Click anywhere on image to pick exact colors. Zoom for precision. Get HEX, RGB & HSL codes.</p>
             
             <label class="upload-btn">
                 <input type="file" id="file-input" accept="image/*" hidden>
@@ -129,7 +129,14 @@
                         </div>
                     </div>
                 </div>
-                <p class="picker-hint">👆 Hover over image to pick any color</p>
+                <!-- Zoom Controls -->
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
+                    <span class="zoom-level" id="zoom-level">100%</span>
+                    <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
+                    <button class="zoom-btn" id="zoom-reset" title="Reset Zoom" style="font-size: 12px;">↺</button>
+                </div>
+                <p class="picker-hint">👆 Click on image to pick exact color • Scroll to zoom</p>
                 <div class="image-actions">
                     <label class="btn btn--secondary btn--sm">
                         <input type="file" id="file-input-new" accept="image/*" hidden>

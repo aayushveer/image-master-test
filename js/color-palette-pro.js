@@ -257,8 +257,12 @@
     }
 
     function bindEvents() {
-        // Upload events
-        el.dropzone.addEventListener('click', () => el.fileInput.click());
+        // Upload events - only trigger if clicking directly on dropzone, not children
+        el.dropzone.addEventListener('click', (e) => {
+            if (e.target === el.dropzone || e.target.classList.contains('upload-hint')) {
+                el.fileInput.click();
+            }
+        });
         el.fileInput.addEventListener('change', handleFileSelect);
         el.dropzone.addEventListener('dragover', handleDragOver);
         el.dropzone.addEventListener('dragleave', handleDragLeave);

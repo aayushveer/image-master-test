@@ -154,7 +154,7 @@ img, svg { display: block; max-width: 100%; }
 
 /* Image Section */
 .image-section {
-    flex: 0 0 320px;
+    flex: 0 0 450px;
 }
 
 .image-wrapper {
@@ -164,12 +164,57 @@ img, svg { display: block; max-width: 100%; }
     padding: 16px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border-light);
+    overflow: hidden;
 }
 
 .image-wrapper img {
     width: 100%;
+    max-height: 500px;
+    height: auto;
+    object-fit: contain;
     border-radius: 8px;
     cursor: crosshair;
+    transition: transform 0.3s ease;
+}
+
+/* Zoom controls */
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+}
+
+.zoom-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.zoom-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.zoom-level {
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-width: 50px;
+    text-align: center;
 }
 
 .picker-hint {

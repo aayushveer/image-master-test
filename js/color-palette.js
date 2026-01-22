@@ -16,6 +16,7 @@ const App = {
     format: 'hex',
     colorCount: 6,
     hoveredColor: null,
+    zoomLevel: 1, // Zoom state
     
     el: {},
     
@@ -63,6 +64,12 @@ const App = {
             shareTwitter: document.getElementById('share-twitter'),
             shareFacebook: document.getElementById('share-facebook'),
             shareWhatsapp: document.getElementById('share-whatsapp'),
+            
+            // Zoom controls
+            zoomIn: document.getElementById('zoom-in'),
+            zoomOut: document.getElementById('zoom-out'),
+            zoomReset: document.getElementById('zoom-reset'),
+            zoomLevel: document.getElementById('zoom-level'),
         };
         
         this.fullCtx = this.el.fullCanvas?.getContext('2d', { willReadFrequently: true });
@@ -125,6 +132,38 @@ const App = {
         
         // Share
         this.setupShareButtons();
+        
+        // Zoom controls
+        this.el.zoomIn?.addEventListener('click', () => this.zoom(0.25));
+        this.el.zoomOut?.addEventListener('click', () => this.zoom(-0.25));
+        this.el.zoomReset?.addEventListener('click', () => this.resetZoom());
+        
+        // Mouse wheel zoom on image
+        this.el.imageWrapper?.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            this.zoom(delta);
+        });
+    },
+    
+    zoom(delta) {
+        this.zoomLevel = Math.max(0.5, Math.min(4, this.zoomLevel + delta));
+        this.applyZoom();
+    },
+    
+    resetZoom() {
+        this.zoomLevel = 1;
+        this.applyZoom();
+    },
+    
+    applyZoom() {
+        if (this.el.previewImg) {
+            this.el.previewImg.style.transform = `scale(${this.zoomLevel})`;
+            this.el.previewImg.style.transformOrigin = 'center center';
+        }
+        if (this.el.zoomLevel) {
+            this.el.zoomLevel.textContent = Math.round(this.zoomLevel * 100) + '%';
+        }
     },
     
     handleImageHover(e) {
