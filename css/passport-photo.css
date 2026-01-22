@@ -11,10 +11,10 @@
     --text-muted: #94a3b8;
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
-    --primary-light: rgba(99, 102, 241, 0.08);
-    --accent: #8b5cf6;
-    --success: #10b981;
-    --success-light: rgba(16, 185, 129, 0.1);
+    --primary-light: rgba(37, 99, 235, 0.08);
+    --accent: #2563eb;
+    --success: #2563eb;
+    --success-light: rgba(37, 99, 235, 0.1);
     --border: #e2e8f0;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --radius: 10px;
@@ -293,6 +293,7 @@ img, svg { display: block; max-width: 100%; }
     width: 120px;
     height: 6px;
     -webkit-appearance: none;
+    appearance: none;
     background: var(--border);
     border-radius: 3px;
     outline: none;
@@ -432,6 +433,7 @@ img, svg { display: block; max-width: 100%; }
     background: transparent;
     outline: none;
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .input-with-unit input::-webkit-outer-spin-button,
@@ -676,6 +678,7 @@ img, svg { display: block; max-width: 100%; }
     background: transparent;
     outline: none;
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .count-input::-webkit-outer-spin-button,
@@ -865,13 +868,13 @@ img, svg { display: block; max-width: 100%; }
 
 .download-btn--primary {
     color: white;
-    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    background: linear-gradient(135deg, var(--success) 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
 .download-btn--primary:hover { 
     transform: translateY(-2px); 
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
 }
 
 .download-btn--secondary {

@@ -13,7 +13,7 @@
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: rgba(37, 99, 235, 0.08);
-    --success: #16a34a;
+    --success: #2563eb;
     --border: #e2e8f0;
     --border-light: #f1f5f9;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -788,7 +788,7 @@ img, svg { display: block; max-width: 100%; }
     margin-bottom: 24px;
 }
 
-.download-btn:hover { background: #16a34a; transform: translateY(-2px); }
+.download-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
 .download-btn svg { width: 22px; height: 22px; }
 
 /* Share */

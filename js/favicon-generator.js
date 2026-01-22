@@ -1010,7 +1010,7 @@
         
         const svg = elements.toast.querySelector('svg');
         if (svg) {
-            svg.style.color = type === 'success' ? '#22c55e' : '#ef4444';
+            svg.style.color = type === 'success' ? '#2563eb' : '#ef4444';
             svg.innerHTML = type === 'success'
                 ? '<path d="M20 6L9 17l-5-5"/>'
                 : '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>';

@@ -422,7 +422,7 @@
         if (type === 'error') {
             elements.toast.querySelector('svg').style.color = '#ef4444';
         } else {
-            elements.toast.querySelector('svg').style.color = '#22c55e';
+            elements.toast.querySelector('svg').style.color = '#2563eb';
         }
         
         setTimeout(() => {

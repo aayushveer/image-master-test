@@ -12,7 +12,7 @@
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: rgba(74, 144, 217, 0.1);
-    --success: #22c55e;
+    --success: #2563eb;
     --border: #e0e0e0;
     --border-light: #f0f0f0;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -133,11 +133,11 @@ img, svg { display: block; max-width: 100%; }
     gap: 8px;
     margin-top: 40px;
     padding: 12px 20px;
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.2);
     border-radius: 30px;
     font-size: 13px;
-    color: #16a34a;
+    color: #2563eb;
 }
 
 .privacy-badge svg { width: 16px; height: 16px; flex-shrink: 0; }

@@ -13,8 +13,8 @@
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: rgba(37, 99, 235, 0.08);
-    --success: #16a34a;
-    --success-light: rgba(22, 163, 74, 0.1);
+    --success: #2563eb;
+    --success-light: rgba(37, 99, 235, 0.08);
     --warning: #f59e0b;
     --warning-light: rgba(245, 158, 11, 0.1);
     --danger: #ef4444;
@@ -394,7 +394,7 @@ img, svg { display: block; max-width: 100%; }
 }
 
 .stat-icon.camera { background: #dbeafe; color: #2563eb; }
-.stat-icon.date { background: #dcfce7; color: #16a34a; }
+.stat-icon.date { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
 .stat-icon.lens { background: #fef3c7; color: #d97706; }
 .stat-icon.settings { background: #fce7f3; color: #db2777; }
 

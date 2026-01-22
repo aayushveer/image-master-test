@@ -12,8 +12,8 @@
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: rgba(37, 99, 235, 0.1);
-    --success: #22c55e;
-    --success-light: rgba(34, 197, 94, 0.1);
+    --success: #2563eb;
+    --success-light: rgba(37, 99, 235, 0.08);
     --error: #ef4444;
     --error-light: rgba(239, 68, 68, 0.1);
     --warning: #f59e0b;
@@ -325,11 +325,11 @@ code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 
 .copy-btn--datauri {
     color: white;
-    background: #10b981;
+    background: #2563eb;
 }
 
 .copy-btn--datauri:hover {
-    background: #059669;
+    background: #1d4ed8;
 }
 
 .copy-btn--base64 {

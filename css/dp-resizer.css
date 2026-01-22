@@ -10,7 +10,7 @@
     --primary-hover: #1d4ed8;
     --primary-light: rgba(37, 99, 235, 0.08);
     --accent: #3b82f6;
-    --success: #16a34a;
+    --success: #2563eb;
     --border: #e2e8f0;
     --radius: 12px;
     --radius-lg: 20px;
@@ -444,6 +444,7 @@ body {
     border-radius: 3px;
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .zoom-controls input[type="range"]::-webkit-slider-thumb {
@@ -690,12 +691,12 @@ body {
     font-size: 16px;
     font-weight: 600;
     color: white;
-    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    background: linear-gradient(135deg, var(--success) 0%, #1d4ed8 100%);
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
 .download-btn:hover {

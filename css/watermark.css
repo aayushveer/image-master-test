@@ -12,8 +12,8 @@
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: rgba(99, 102, 241, 0.1);
-    --success: #22c55e;
-    --success-light: rgba(34, 197, 94, 0.1);
+    --success: #2563eb;
+    --success-light: rgba(37, 99, 235, 0.1);
     --border: #e5e5e5;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --radius: 8px;
@@ -247,6 +247,7 @@ img, svg { display: block; max-width: 100%; }
     width: 100%;
     height: 8px;
     -webkit-appearance: none;
+    appearance: none;
     background: var(--bg);
     border-radius: 4px;
 }
@@ -409,7 +410,7 @@ img, svg { display: block; max-width: 100%; }
     margin-bottom: 24px;
 }
 
-.download-btn:hover { background: #16a34a; transform: translateY(-2px); }
+.download-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
 .download-btn svg { width: 22px; height: 22px; }
 
 /* Share Section */
