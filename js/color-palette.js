@@ -20,6 +20,7 @@ const App = {
     panX: 0, // Pan X offset
     panY: 0, // Pan Y offset
     isPanning: false,
+    wasDragging: false, // Track if we just dragged (to prevent color pick)
     panStartX: 0,
     panStartY: 0,
     
@@ -168,8 +169,17 @@ const App = {
     doPan(e) {
         if (!this.isPanning) return;
         e.preventDefault();
-        this.panX = e.clientX - this.panStartX;
-        this.panY = e.clientY - this.panStartY;
+        
+        const newPanX = e.clientX - this.panStartX;
+        const newPanY = e.clientY - this.panStartY;
+        
+        // Mark as dragging if moved more than 5px
+        if (Math.abs(newPanX - this.panX) > 5 || Math.abs(newPanY - this.panY) > 5) {
+            this.wasDragging = true;
+        }
+        
+        this.panX = newPanX;
+        this.panY = newPanY;
         this.applyZoom();
     },
     
@@ -238,6 +248,12 @@ const App = {
     },
     
     handleImageClick(e) {
+        // Don't pick color if we just finished dragging
+        if (this.wasDragging) {
+            this.wasDragging = false;
+            return;
+        }
+        
         if (this.hoveredColor) {
             // Copy to clipboard
             this.copyToClipboard(this.hoveredColor);
