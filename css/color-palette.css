@@ -176,9 +176,10 @@ img, svg { display: block; max-width: 100%; }
 }
 
 .image-container.zoomed {
-    cursor: grab;
+    cursor: crosshair;
 }
 
+.image-container.zoomed:active,
 .image-container.dragging {
     cursor: grabbing;
 }

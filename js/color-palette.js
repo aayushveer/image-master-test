@@ -189,7 +189,7 @@ const App = {
     },
     
     zoom(delta) {
-        this.zoomLevel = Math.max(1, Math.min(4, this.zoomLevel + delta));
+        this.zoomLevel = Math.max(1, Math.min(10, this.zoomLevel + delta));
         // Reset pan if zooming to 100%
         if (this.zoomLevel === 1) {
             this.panX = 0;
