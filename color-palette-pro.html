@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Color Palette Pro | Extract Dominant Colors from Image | Image Runner</title>
+    <meta name="description" content="Extract a beautiful color palette from any image. Get HEX, RGB, HSL codes instantly. No pixel picker, just fast palette extraction. 100% private.">
+    <meta name="keywords" content="color palette pro, extract palette, dominant colors, color scheme generator, palette from image, hex color extractor, rgb color picker, hsl color codes, image color analysis, photo color palette, design colors, color inspiration, color scheme from image, palette from photo, color extraction tool, automatic color palette, ai color picker, smart color detection, designer tool, artist tool, developer tool, web design colors, ui colors, ux colors, branding colors, logo colors, marketing colors, social media colors, instagram palette, pinterest colors, dribbble colors, behance colors, adobe color alternative, coolors alternative, canva color picker, figma color tool, photoshop eyedropper, free color tool, online color extractor, browser color picker, client side processing, private color tool, no upload, works offline, copy hex code, copy rgb, copy hsl, download palette, export colors, save palette, palette image, color swatch, color grid, best color extractor 2025, top palette generator">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="canonical" href="https://www.imgrunner.com/color-palette-pro.html">
+    <link rel="stylesheet" href="css/color-palette.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        .palette-pro-container { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+        .palette-pro-header { text-align: center; margin-bottom: 30px; }
+        .palette-pro-header h1 { color: #2563eb; font-size: 2.2rem; font-weight: 700; }
+        .palette-pro-header p { color: #475569; font-size: 1.1rem; margin-top: 10px; }
+        .upload-box { background: #f8fafc; border-radius: 16px; padding: 32px 24px; text-align: center; margin-bottom: 32px; box-shadow: 0 2px 8px rgba(37,99,235,0.06); }
+        .upload-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .upload-btn:hover { background: #1d4ed8; }
+        .palette-section { margin-top: 30px; }
+        .palette-title { font-size: 1.3rem; color: #1e293b; font-weight: 600; margin-bottom: 18px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 18px; }
+        .palette-color { background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(37,99,235,0.07); padding: 18px 10px 10px 10px; text-align: center; position: relative; }
+        .palette-swatch { width: 48px; height: 48px; border-radius: 8px; margin: 0 auto 10px; border: 1.5px solid #e2e8f0; }
+        .palette-code { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: #2563eb; font-weight: 600; margin-bottom: 2px; cursor: pointer; }
+        .palette-format { color: #64748b; font-size: 0.9rem; margin-bottom: 4px; }
+        .palette-actions { margin-top: 18px; text-align: center; }
+        .btn-copy-all, .btn-download { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; margin: 0 8px; }
+        .btn-copy-all:hover, .btn-download:hover { background: #1d4ed8; }
+        .format-toggle { margin: 18px 0 10px 0; text-align: center; }
+        .format-btn { background: #f1f5f9; color: #2563eb; border: none; border-radius: 6px; padding: 7px 18px; font-size: 1rem; font-weight: 600; margin: 0 4px; cursor: pointer; }
+        .format-btn.active, .format-btn:hover { background: #2563eb; color: #fff; }
+        .toast { display: none; position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); background: #2563eb; color: #fff; padding: 14px 32px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; z-index: 9999; box-shadow: 0 2px 8px rgba(37,99,235,0.18); }
+        .toast.show { display: block; animation: fadeInOut 2.2s; }
+        @keyframes fadeInOut { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="palette-pro-container">
+        <div class="palette-pro-header">
+            <h1>Color Palette Pro</h1>
+            <p>Extract a beautiful palette of dominant colors from any image. No pixel picker, just fast palette extraction for designers.</p>
+        </div>
+        <div class="upload-box">
+            <input type="file" id="file-input" accept="image/*" style="display:none;">
+            <button class="upload-btn" onclick="document.getElementById('file-input').click()">Upload Image</button>
+            <p style="color:#64748b; margin-top:10px;">100% Private – Image never leaves your device</p>
+        </div>
+        <div class="palette-section" id="palette-section" style="display:none;">
+            <div class="palette-title">Extracted Palette</div>
+            <div class="format-toggle">
+                <button class="format-btn active" data-format="hex">HEX</button>
+                <button class="format-btn" data-format="rgb">RGB</button>
+                <button class="format-btn" data-format="hsl">HSL</button>
+            </div>
+            <div class="palette-grid" id="palette-grid"></div>
+            <div class="palette-actions">
+                <button class="btn-copy-all" id="btn-copy-all">Copy All</button>
+                <button class="btn-download" id="btn-download">Download Palette</button>
+            </div>
+        </div>
+        <div class="toast" id="toast">Copied!</div>
+    </div>
+    <script>
+    // --- Color Palette Pro JS (no pixel picker) ---
+    const fileInput = document.getElementById('file-input');
+    const paletteSection = document.getElementById('palette-section');
+    const paletteGrid = document.getElementById('palette-grid');
+    const formatBtns = document.querySelectorAll('.format-btn');
+    const btnCopyAll = document.getElementById('btn-copy-all');
+    const btnDownload = document.getElementById('btn-download');
+    const toast = document.getElementById('toast');
+    let palette = [];
+    let format = 'hex';
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    function rgbToHex(r,g,b) {
+        return '#' + [r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();
+    }
+    function rgbToHsl(r,g,b) {
+        r/=255;g/=255;b/=255;
+        let max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,l=(max+min)/2;
+        if(max==min){h=s=0;}else{
+            let d=max-min;
+            s=l>0.5?d/(2-max-min):d/(max+min);
+            switch(max){
+                case r:h=(g-b)/d+(g<b?6:0);break;
+                case g:h=(b-r)/d+2;break;
+                case b:h=(r-g)/d+4;break;
+            }
+            h/=6;
+        }
+        return `hsl(${Math.round(h*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+    }
+    function getPalette(img, colorCount=6) {
+        // Use canvas + quantize (MMCQ) for dominant colors
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0);
+        const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+        // MMCQ quantize
+        function quantize(pixels, colorCount) {
+            // Simple median cut quantization (for demo, not production)
+            function getRange(arr, idx) {
+                let min=255,max=0; for(let i=0;i<arr.length;i+=4){if(arr[i+3]<128)continue;let v=arr[i+idx];if(v<min)min=v;if(v>max)max=v;} return max-min; }
+            function medianCut(arr, depth) {
+                if(depth===0||arr.length/4<=1) return [arr];
+                let ranges=[getRange(arr,0),getRange(arr,1),getRange(arr,2)];
+                let idx=ranges.indexOf(Math.max(...ranges));
+                let sorted=Array.from({length:arr.length/4},(_,i)=>arr.slice(i*4,i*4+4)).sort((a,b)=>a[idx]-b[idx]);
+                let mid=Math.floor(sorted.length/2);
+                return medianCut(sorted.slice(0,mid).flat(),depth-1).concat(medianCut(sorted.slice(mid).flat(),depth-1));
+            }
+            let boxes=medianCut(pixels,Math.log2(colorCount));
+            return boxes.map(box=>{
+                let r=0,g=0,b=0,c=0; for(let i=0;i<box.length;i+=4){if(box[i+3]<128)continue;r+=box[i];g+=box[i+1];b+=box[i+2];c++;} if(c===0)return[255,255,255]; return [Math.round(r/c),Math.round(g/c),Math.round(b/c)];
+            });
+        }
+        return quantize(data, colorCount);
+    }
+    fileInput.addEventListener('change', e => {
+        if(!e.target.files[0]) return;
+        const img = new Image();
+        img.onload = function() {
+            palette = getPalette(img, 6);
+            renderPalette();
+            paletteSection.style.display = 'block';
+        };
+        img.src = URL.createObjectURL(e.target.files[0]);
+    });
+    function renderPalette() {
+        paletteGrid.innerHTML = palette.map(rgb => {
+            let code = format==='hex'?rgbToHex(...rgb):format==='rgb'?`rgb(${rgb.join(',')})`:rgbToHsl(...rgb);
+            return `<div class="palette-color"><div class="palette-swatch" style="background:${rgbToHex(...rgb)}"></div><div class="palette-code" onclick="navigator.clipboard.writeText('${code}');showToast('Copied: ${code}')">${code}</div><div class="palette-format">${format.toUpperCase()}</div></div>`;
+        }).join('');
+    }
+    formatBtns.forEach(btn => {
+        btn.addEventListener('click',()=>{
+            formatBtns.forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            format = btn.dataset.format;
+            renderPalette();
+        });
+    });
+    btnCopyAll.addEventListener('click',()=>{
+        if(palette.length===0)return;
+        let codes = palette.map(rgb=>format==='hex'?rgbToHex(...rgb):format==='rgb'?`rgb(${rgb.join(',')})`:rgbToHsl(...rgb)).join(', ');
+        navigator.clipboard.writeText(codes);
+        showToast('Copied all colors!');
+    });
+    btnDownload.addEventListener('click',()=>{
+        if(palette.length===0)return;
+        const canvas = document.createElement('canvas');
+        const sw = 80, sh = 80, pad = 18;
+        canvas.width = palette.length*sw+pad*2;
+        canvas.height = sh+pad*2+28;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        palette.forEach((rgb,i)=>{
+            ctx.fillStyle = rgbToHex(...rgb);
+            ctx.fillRect(pad+i*sw, pad, sw-10, sh-10);
+            ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
+            ctx.strokeRect(pad+i*sw, pad, sw-10, sh-10);
+            ctx.font = 'bold 15px JetBrains Mono, monospace';
+            ctx.fillStyle = '#2563eb';
+            let code = format==='hex'?rgbToHex(...rgb):format==='rgb'?`rgb(${rgb.join(',')})`:rgbToHsl(...rgb);
+            ctx.fillText(code, pad+i*sw+6, pad+sh-10+20);
+        });
+        const a = document.createElement('a');
+        a.download = 'color-palette.png';
+        a.href = canvas.toDataURL();
+        a.click();
+    });
+    </script>
+</body>
+</html>
