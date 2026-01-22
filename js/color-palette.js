@@ -17,6 +17,11 @@ const App = {
     colorCount: 6,
     hoveredColor: null,
     zoomLevel: 1, // Zoom state
+    panX: 0, // Pan X offset
+    panY: 0, // Pan Y offset
+    isPanning: false,
+    panStartX: 0,
+    panStartY: 0,
     
     el: {},
     
@@ -70,6 +75,7 @@ const App = {
             zoomOut: document.getElementById('zoom-out'),
             zoomReset: document.getElementById('zoom-reset'),
             zoomLevel: document.getElementById('zoom-level'),
+            imageContainer: document.getElementById('image-container'),
         };
         
         this.fullCtx = this.el.fullCanvas?.getContext('2d', { willReadFrequently: true });
@@ -144,22 +150,58 @@ const App = {
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
             this.zoom(delta);
         });
+        
+        // Pan/drag when zoomed
+        this.el.imageContainer?.addEventListener('mousedown', (e) => this.startPan(e));
+        document.addEventListener('mousemove', (e) => this.doPan(e));
+        document.addEventListener('mouseup', () => this.endPan());
+    },
+    
+    startPan(e) {
+        if (this.zoomLevel <= 1) return;
+        this.isPanning = true;
+        this.panStartX = e.clientX - this.panX;
+        this.panStartY = e.clientY - this.panY;
+        this.el.imageContainer?.classList.add('dragging');
+    },
+    
+    doPan(e) {
+        if (!this.isPanning) return;
+        e.preventDefault();
+        this.panX = e.clientX - this.panStartX;
+        this.panY = e.clientY - this.panStartY;
+        this.applyZoom();
+    },
+    
+    endPan() {
+        this.isPanning = false;
+        this.el.imageContainer?.classList.remove('dragging');
     },
     
     zoom(delta) {
-        this.zoomLevel = Math.max(0.5, Math.min(4, this.zoomLevel + delta));
+        this.zoomLevel = Math.max(1, Math.min(4, this.zoomLevel + delta));
+        // Reset pan if zooming to 100%
+        if (this.zoomLevel === 1) {
+            this.panX = 0;
+            this.panY = 0;
+        }
         this.applyZoom();
     },
     
     resetZoom() {
         this.zoomLevel = 1;
+        this.panX = 0;
+        this.panY = 0;
         this.applyZoom();
     },
     
     applyZoom() {
         if (this.el.previewImg) {
-            this.el.previewImg.style.transform = `scale(${this.zoomLevel})`;
+            this.el.previewImg.style.transform = `scale(${this.zoomLevel}) translate(${this.panX / this.zoomLevel}px, ${this.panY / this.zoomLevel}px)`;
             this.el.previewImg.style.transformOrigin = 'center center';
+        }
+        if (this.el.imageContainer) {
+            this.el.imageContainer.classList.toggle('zoomed', this.zoomLevel > 1);
         }
         if (this.el.zoomLevel) {
             this.el.zoomLevel.textContent = Math.round(this.zoomLevel * 100) + '%';

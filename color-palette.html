@@ -117,7 +117,9 @@
             <!-- Image Preview -->
             <div class="image-section">
                 <div class="image-wrapper" id="image-wrapper">
-                    <img id="preview-img" src="" alt="Source Image">
+                    <div class="image-container" id="image-container">
+                        <img id="preview-img" src="" alt="Source Image">
+                    </div>
                     <canvas id="hidden-canvas" style="display:none;"></canvas>
                     <canvas id="full-canvas" style="display:none;"></canvas>
                     <!-- Color Picker Tooltip -->
@@ -136,7 +138,7 @@
                     <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
                     <button class="zoom-btn" id="zoom-reset" title="Reset Zoom" style="font-size: 12px;">↺</button>
                 </div>
-                <p class="picker-hint">👆 Click on image to pick exact color • Scroll to zoom</p>
+                <p class="picker-hint">👆 Click to pick color • Scroll to zoom • Drag to pan when zoomed</p>
                 <div class="image-actions">
                     <label class="btn btn--secondary btn--sm">
                         <input type="file" id="file-input-new" accept="image/*" hidden>
@@ -152,6 +154,34 @@
             
             <!-- Palette Section -->
             <div class="palette-section">
+                <!-- Picked Colors Panel - At Top -->
+                <div class="picked-colors-panel" id="picked-colors-panel" style="display:none;">
+                    <div class="picked-colors-header">
+                        <h3>🎯 Picked Colors <span class="picked-count">(<span id="picked-colors-count">0</span>)</span></h3>
+                        <button class="btn-clear" id="btn-clear-picked" title="Clear all">Clear</button>
+                    </div>
+                    <div class="picked-colors-list" id="picked-colors-list">
+                        <!-- Picked colors will appear here -->
+                    </div>
+                    <div class="picked-colors-actions">
+                        <button class="btn btn--sm btn--secondary" id="btn-copy-picked">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                            </svg>
+                            Copy All
+                        </button>
+                        <button class="btn btn--sm btn--primary" id="btn-download-picked">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="palette-header">
                     <h2 class="palette-title">Extracted Palette</h2>
                     <div class="palette-controls">
@@ -194,34 +224,6 @@
                     <button class="format-btn active" data-format="hex">HEX</button>
                     <button class="format-btn" data-format="rgb">RGB</button>
                     <button class="format-btn" data-format="hsl">HSL</button>
-                </div>
-                
-                <!-- Picked Colors Panel -->
-                <div class="picked-colors-panel" id="picked-colors-panel" style="display:none;">
-                    <div class="picked-colors-header">
-                        <h3>🎯 Picked Colors <span class="picked-count">(<span id="picked-colors-count">0</span>)</span></h3>
-                        <button class="btn-clear" id="btn-clear-picked" title="Clear all">Clear</button>
-                    </div>
-                    <div class="picked-colors-list" id="picked-colors-list">
-                        <!-- Picked colors will appear here -->
-                    </div>
-                    <div class="picked-colors-actions">
-                        <button class="btn btn--sm btn--secondary" id="btn-copy-picked">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <rect x="9" y="9" width="13" height="13" rx="2"/>
-                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-                            </svg>
-                            Copy All
-                        </button>
-                        <button class="btn btn--sm btn--primary" id="btn-download-picked">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            Download
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

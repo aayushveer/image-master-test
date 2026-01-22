@@ -167,14 +167,31 @@ img, svg { display: block; max-width: 100%; }
     overflow: hidden;
 }
 
+/* Image container for pan/zoom */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+    border-radius: 8px;
+}
+
+.image-container.zoomed {
+    cursor: grab;
+}
+
+.image-container.dragging {
+    cursor: grabbing;
+}
+
 .image-wrapper img {
     width: 100%;
     max-height: 500px;
     height: auto;
     object-fit: contain;
     border-radius: 8px;
-    cursor: crosshair;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 /* Zoom controls */
