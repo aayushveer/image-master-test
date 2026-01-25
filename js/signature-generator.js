@@ -26,27 +26,28 @@ class SignatureGeneratorPro {
         this.smoothing = 5;
         
         // Signature styles with realistic handwriting simulation
+        // Real connected handwriting fonts from Google Fonts
         this.signatureStyles = [
-            { name: 'Elegant Script', family: 'cursive', slant: 12, weight: 400, letterSpacing: -2, style: 'italic', baseline: 'connected' },
-            { name: 'Bold Executive', family: 'serif', slant: 8, weight: 700, letterSpacing: 1, style: 'italic', baseline: 'bold' },
-            { name: 'Modern Minimal', family: 'sans-serif', slant: 0, weight: 300, letterSpacing: 3, style: 'normal', baseline: 'clean' },
-            { name: 'Classic Cursive', family: 'cursive', slant: 15, weight: 500, letterSpacing: -1, style: 'italic', baseline: 'flowing' },
-            { name: 'Professional', family: 'serif', slant: 5, weight: 500, letterSpacing: 0, style: 'italic', baseline: 'formal' },
-            { name: 'Artistic Flair', family: 'cursive', slant: 20, weight: 400, letterSpacing: -3, style: 'italic', baseline: 'artistic' },
-            { name: 'Quick Scribble', family: 'cursive', slant: 25, weight: 300, letterSpacing: -4, style: 'italic', baseline: 'fast' },
-            { name: 'Formal Signature', family: 'serif', slant: 10, weight: 600, letterSpacing: 2, style: 'italic', baseline: 'formal' },
-            { name: 'Casual Flow', family: 'cursive', slant: 18, weight: 400, letterSpacing: -2, style: 'italic', baseline: 'casual' },
-            { name: 'Power Statement', family: 'sans-serif', slant: 0, weight: 800, letterSpacing: 4, style: 'normal', baseline: 'power' },
-            { name: 'Vintage Script', family: 'cursive', slant: 14, weight: 500, letterSpacing: -1, style: 'italic', baseline: 'vintage' },
-            { name: 'Minimalist Chic', family: 'sans-serif', slant: 3, weight: 200, letterSpacing: 5, style: 'normal', baseline: 'minimal' },
-            { name: 'Brush Stroke', family: 'cursive', slant: 22, weight: 600, letterSpacing: -3, style: 'italic', baseline: 'brush' },
-            { name: 'CEO Signature', family: 'serif', slant: 7, weight: 700, letterSpacing: 1, style: 'italic', baseline: 'executive' },
-            { name: 'Artist Mark', family: 'cursive', slant: 30, weight: 400, letterSpacing: -5, style: 'italic', baseline: 'art' },
-            { name: 'Clean Modern', family: 'sans-serif', slant: 0, weight: 400, letterSpacing: 2, style: 'normal', baseline: 'clean' },
-            { name: 'Traditional', family: 'serif', slant: 12, weight: 500, letterSpacing: 0, style: 'italic', baseline: 'traditional' },
-            { name: 'Fast & Fluid', family: 'cursive', slant: 28, weight: 300, letterSpacing: -4, style: 'italic', baseline: 'fluid' },
-            { name: 'Luxury Brand', family: 'serif', slant: 6, weight: 400, letterSpacing: 6, style: 'italic', baseline: 'luxury' },
-            { name: 'Personal Touch', family: 'cursive', slant: 16, weight: 450, letterSpacing: -2, style: 'italic', baseline: 'personal' }
+            { name: 'Elegant Script', family: 'Great Vibes', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'connected' },
+            { name: 'Flowing Cursive', family: 'Allura', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'flowing' },
+            { name: 'Classic Handwriting', family: 'Dancing Script', slant: 0, weight: 600, letterSpacing: 0, style: 'normal', baseline: 'classic' },
+            { name: 'Artistic Brush', family: 'Alex Brush', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'brush' },
+            { name: 'Natural Handwriting', family: 'Homemade Apple', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'natural' },
+            { name: 'Bold Marker', family: 'Permanent Marker', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'marker' },
+            { name: 'Casual Script', family: 'Kaushan Script', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'casual' },
+            { name: 'Vintage Pen', family: 'Marck Script', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'vintage' },
+            { name: 'Modern Flow', family: 'Pacifico', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'modern' },
+            { name: 'Quick Scribble', family: 'Kristi', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'quick' },
+            { name: 'Rough Handwriting', family: 'Rock Salt', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'rough' },
+            { name: 'Smooth Cursive', family: 'Sacramento', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'smooth' },
+            { name: 'Satisfying Flow', family: 'Satisfy', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'satisfy' },
+            { name: 'Light Handwriting', family: 'Shadows Into Light', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'light' },
+            { name: 'Fancy Calligraphy', family: 'Tangerine', slant: 0, weight: 700, letterSpacing: 0, style: 'normal', baseline: 'fancy' },
+            { name: 'Playful Script', family: 'Zeyada', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'playful' },
+            { name: 'Professional Script', family: 'Dancing Script', slant: 0, weight: 700, letterSpacing: 0, style: 'normal', baseline: 'professional' },
+            { name: 'Elegant Thin', family: 'Tangerine', slant: 0, weight: 400, letterSpacing: 0, style: 'normal', baseline: 'thin' },
+            { name: 'Bold Cursive', family: 'Dancing Script', slant: 0, weight: 500, letterSpacing: 0, style: 'normal', baseline: 'bold' },
+            { name: 'Delicate Script', family: 'Great Vibes', slant: 0, weight: 400, letterSpacing: 1, style: 'normal', baseline: 'delicate' }
         ];
 
         this.initialStyles = [
@@ -407,16 +408,24 @@ class SignatureGeneratorPro {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const fontSize = 24;
-        ctx.font = `${style.style} ${style.weight} ${fontSize}px ${style.family}`;
+        // Use larger font for connected scripts
+        const fontSize = style.family === 'Tangerine' ? 32 : 26;
+        ctx.font = `${style.weight} ${fontSize}px "${style.family}", cursive`;
         ctx.fillStyle = '#2563eb';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Apply slant
+        // Draw text centered
         ctx.save();
         ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.transform(1, 0, Math.tan(style.slant * Math.PI / 180), 1, 0, 0);
+        
+        // Measure and scale if needed
+        let textWidth = ctx.measureText(text || 'Sample').width;
+        if (textWidth > canvas.width * 0.9) {
+            const scale = (canvas.width * 0.9) / textWidth;
+            ctx.scale(scale, scale);
+        }
+        
         ctx.fillText(text || 'Sample', 0, 0);
         ctx.restore();
     }
@@ -446,11 +455,12 @@ class SignatureGeneratorPro {
         const size = this.sizeConfig[this.signatureSize];
         const thickness = this.thicknessMultiplier[this.strokeThickness];
         
-        let fontSize = size.fontSize;
-        const totalSlant = style.slant + this.slantAngle;
+        // Larger base font for connected scripts
+        let fontSize = style.family === 'Tangerine' ? size.fontSize * 1.5 : size.fontSize * 1.2;
+        const totalSlant = this.slantAngle; // Only use user's slant, fonts have natural slant
 
-        // Set font
-        ctx.font = `${style.style} ${Math.round(style.weight * thickness)} ${fontSize}px ${style.family}`;
+        // Set font with proper connected script
+        ctx.font = `${style.weight} ${fontSize}px "${style.family}", cursive`;
         ctx.fillStyle = this.signatureColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -459,49 +469,27 @@ class SignatureGeneratorPro {
         let textWidth = ctx.measureText(this.userName).width;
         while (textWidth > canvas.width * 0.85 && fontSize > 16) {
             fontSize -= 2;
-            ctx.font = `${style.style} ${Math.round(style.weight * thickness)} ${fontSize}px ${style.family}`;
+            ctx.font = `${style.weight} ${fontSize}px "${style.family}", cursive`;
             textWidth = ctx.measureText(this.userName).width;
         }
 
         // Apply transformations
         ctx.save();
         ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.transform(1, 0, Math.tan(totalSlant * Math.PI / 180), 1, 0, 0);
-
-        // Add subtle shadow for realistic look
-        ctx.shadowColor = 'rgba(0,0,0,0.1)';
-        ctx.shadowBlur = 2;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
-
-        // Letter spacing simulation
-        if (style.letterSpacing !== 0) {
-            const chars = this.userName.split('');
-            let x = -textWidth / 2;
-            chars.forEach(char => {
-                ctx.fillText(char, x, 0);
-                x += ctx.measureText(char).width + style.letterSpacing;
-            });
-        } else {
-            ctx.fillText(this.userName, 0, 0);
+        
+        // Apply user slant
+        if (totalSlant !== 0) {
+            ctx.transform(1, 0, Math.tan(totalSlant * Math.PI / 180), 1, 0, 0);
         }
 
-        // Add underline for some styles
-        if (style.baseline === 'underline' || style.baseline === 'flowing') {
-            ctx.beginPath();
-            ctx.strokeStyle = this.signatureColor;
-            ctx.lineWidth = thickness * 1.5;
-            ctx.moveTo(-textWidth / 2 - 10, fontSize / 2 + 5);
-            
-            // Wavy underline
-            const steps = 20;
-            for (let i = 0; i <= steps; i++) {
-                const x = -textWidth / 2 - 10 + (textWidth + 20) * (i / steps);
-                const y = fontSize / 2 + 5 + Math.sin(i * 0.5) * 3;
-                ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-        }
+        // Add subtle shadow for ink effect
+        ctx.shadowColor = 'rgba(0,0,0,0.15)';
+        ctx.shadowBlur = 1;
+        ctx.shadowOffsetX = 0.5;
+        ctx.shadowOffsetY = 0.5;
+
+        // Draw the connected signature
+        ctx.fillText(this.userName, 0, 0);
 
         ctx.restore();
     }
@@ -714,21 +702,30 @@ class SignatureGeneratorPro {
     downloadSVG(filename) {
         const size = this.sizeConfig[this.signatureSize];
         const style = this.signatureStyles[this.currentStyle];
+        const fontSize = style.family === 'Tangerine' ? size.fontSize * 1.5 : size.fontSize * 1.2;
         
         let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${size.width} ${size.height}">`;
+        
+        // Embed Google Font for SVG
+        svgContent += `
+            <defs>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=${style.family.replace(/ /g, '+')}&amp;display=swap');
+                </style>
+            </defs>
+        `;
 
         if (this.mode === 'type' && this.userName) {
-            const totalSlant = style.slant + this.slantAngle;
+            const totalSlant = this.slantAngle;
             svgContent += `
                 <text x="${size.width/2}" y="${size.height/2}" 
-                      font-family="${style.family}" 
-                      font-size="${size.fontSize}" 
+                      font-family="'${style.family}', cursive" 
+                      font-size="${fontSize}" 
                       font-weight="${style.weight}"
-                      font-style="${style.style}"
                       fill="${this.signatureColor}"
                       text-anchor="middle"
                       dominant-baseline="central"
-                      transform="skewX(${-totalSlant})">${this.userName}</text>
+                      ${totalSlant !== 0 ? `transform="skewX(${-totalSlant})"` : ''}>${this.userName}</text>
             `;
         } else if (this.mode === 'draw' && this.drawPoints.length > 1) {
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
