@@ -295,7 +295,6 @@
         injectStyles();
         createButton();
         createPopup();
-        console.log('🐛 Bug Report button ready');
     }
     
     init();
