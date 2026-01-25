@@ -319,7 +319,8 @@ body {
 .canvas-container canvas {
     display: block;
     background: white;
-    cursor: crosshair;
+    /* Pen cursor with hotspot at tip (bottom-left corner at 0,24) */
+    cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 21l3-3" stroke="%23333" stroke-width="2" stroke-linecap="round"/><path d="M12 3L21 12L12 21L3 12L12 3Z" fill="none" stroke="%232563eb" stroke-width="0"/><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75 1.84-1.83z" fill="%232563eb"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="%232563eb"/></svg>') 0 24, crosshair;
 }
 
 .canvas-placeholder {
