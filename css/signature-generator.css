@@ -154,9 +154,18 @@ body {
 
 .mode-tab svg { width: 20px; height: 20px; }
 
-/* Sections */
-section { display: none; }
-section.active-section { display: block; }
+/* Mode Sections - Type, Draw, Initials */
+.type-section,
+.draw-section,
+.initials-section {
+    display: none;
+}
+
+.type-section.active-section,
+.draw-section.active-section,
+.initials-section.active-section {
+    display: block;
+}
 
 /* Input Box */
 .input-box {
