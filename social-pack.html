@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Pack Pro - All Platforms, One Click | imgrunner</title>
+    <meta name="description" content="Upload one image, get perfectly sized versions for Instagram, Facebook, YouTube, Twitter, LinkedIn, WhatsApp. All platforms. One click. Free forever.">
+    <meta name="keywords" content="social media image resizer, instagram post size, facebook cover photo, youtube thumbnail, twitter header, linkedin banner">
+    <link rel="canonical" href="https://www.imgrunner.com/social-pack.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Social Pack Pro - All Platforms, One Click">
+    <meta property="og:description" content="Upload one image, get 15 perfectly sized versions for all social platforms. Free forever.">
+    <meta property="og:url" content="https://www.imgrunner.com/social-pack.html">
+    <meta property="og:type" content="website">
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    <link rel="stylesheet" href="css/social-pack.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="back-btn" title="Back to Home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div class="logo">
+                <span class="logo-icon">📦</span>
+                <span class="logo-text">Social Pack Pro</span>
+            </div>
+            <div class="header-stats">
+                <span class="stat-badge">
+                    <span class="stat-number" id="totalGenerated">847,293</span>
+                    <span class="stat-label">images created</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>All Your Images.<br><span class="gradient-text">All Platforms.</span><br>One Click.</h1>
+            <p class="hero-subtitle">Upload once. Get 15 perfectly sized images for every social platform. Download all as ZIP.</p>
+            <div class="hero-platforms">
+                <span class="platform-pill instagram">Instagram</span>
+                <span class="platform-pill facebook">Facebook</span>
+                <span class="platform-pill youtube">YouTube</span>
+                <span class="platform-pill twitter">Twitter</span>
+                <span class="platform-pill linkedin">LinkedIn</span>
+                <span class="platform-pill whatsapp">WhatsApp</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App -->
+    <main class="app-container">
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <h2>Drop your image here</h2>
+                <p>or click to browse</p>
+                <span class="upload-hint">Supports JPG, PNG, WebP • Max 50MB</span>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+        </div>
+
+        <!-- Editor Section (Hidden initially) -->
+        <div class="editor-section" id="editorSection" style="display: none;">
+            <!-- Source Preview -->
+            <div class="source-panel">
+                <div class="panel-header">
+                    <h3>📷 Source Image</h3>
+                    <button class="btn-change" id="changeImageBtn">Change Image</button>
+                </div>
+                <div class="source-preview">
+                    <img id="sourceImage" src="" alt="Source">
+                    <div class="source-info">
+                        <span id="sourceSize">0 x 0</span>
+                        <span id="sourceFormat">JPG</span>
+                    </div>
+                </div>
+                
+                <!-- Focal Point -->
+                <div class="focal-point-section">
+                    <h4>🎯 Focal Point</h4>
+                    <p class="focal-hint">Click on the image to set focus area for smart cropping</p>
+                    <div class="focal-preview-container">
+                        <div class="focal-preview" id="focalPreview">
+                            <img id="focalImage" src="" alt="Set focal point">
+                            <div class="focal-marker" id="focalMarker" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <button class="btn-reset-focal" id="resetFocalBtn">Reset to Center</button>
+                </div>
+            </div>
+
+            <!-- Platform Selection -->
+            <div class="platforms-panel">
+                <div class="panel-header">
+                    <h3>📱 Select Platforms</h3>
+                    <div class="select-actions">
+                        <button class="btn-select-all" id="selectAllBtn">Select All</button>
+                        <button class="btn-deselect-all" id="deselectAllBtn">Deselect All</button>
+                    </div>
+                </div>
+
+                <!-- Platform Groups -->
+                <div class="platform-groups">
+                    <!-- Instagram -->
+                    <div class="platform-group" data-platform="instagram">
+                        <div class="group-header">
+                            <span class="group-icon">📸</span>
+                            <span class="group-name">Instagram</span>
+                            <span class="group-count">4 sizes</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="ig-post" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Post (Square)</span>
+                                    <span class="size-dims">1080 × 1080</span>
+                                </span>
+                                <span class="size-preview square"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="ig-portrait" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Portrait</span>
+                                    <span class="size-dims">1080 × 1350</span>
+                                </span>
+                                <span class="size-preview portrait"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="ig-story" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Story / Reels</span>
+                                    <span class="size-dims">1080 × 1920</span>
+                                </span>
+                                <span class="size-preview story"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="ig-profile" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Profile Picture</span>
+                                    <span class="size-dims">320 × 320</span>
+                                </span>
+                                <span class="size-preview square small"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Facebook -->
+                    <div class="platform-group" data-platform="facebook">
+                        <div class="group-header">
+                            <span class="group-icon">👤</span>
+                            <span class="group-name">Facebook</span>
+                            <span class="group-count">3 sizes</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="fb-post" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Post</span>
+                                    <span class="size-dims">1200 × 630</span>
+                                </span>
+                                <span class="size-preview landscape"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="fb-cover" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Cover Photo</span>
+                                    <span class="size-dims">820 × 312</span>
+                                </span>
+                                <span class="size-preview cover"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="fb-profile" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Profile Picture</span>
+                                    <span class="size-dims">170 × 170</span>
+                                </span>
+                                <span class="size-preview square small"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- YouTube -->
+                    <div class="platform-group" data-platform="youtube">
+                        <div class="group-header">
+                            <span class="group-icon">▶️</span>
+                            <span class="group-name">YouTube</span>
+                            <span class="group-count">3 sizes</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="yt-thumbnail" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Thumbnail</span>
+                                    <span class="size-dims">1280 × 720</span>
+                                </span>
+                                <span class="size-preview thumbnail"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="yt-banner" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Channel Banner</span>
+                                    <span class="size-dims">2560 × 1440</span>
+                                </span>
+                                <span class="size-preview banner"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="yt-profile" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Profile Picture</span>
+                                    <span class="size-dims">800 × 800</span>
+                                </span>
+                                <span class="size-preview square"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Twitter/X -->
+                    <div class="platform-group" data-platform="twitter">
+                        <div class="group-header">
+                            <span class="group-icon">𝕏</span>
+                            <span class="group-name">Twitter / X</span>
+                            <span class="group-count">2 sizes</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="tw-post" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Post Image</span>
+                                    <span class="size-dims">1200 × 675</span>
+                                </span>
+                                <span class="size-preview landscape"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="tw-header" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Header</span>
+                                    <span class="size-dims">1500 × 500</span>
+                                </span>
+                                <span class="size-preview header"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="platform-group" data-platform="linkedin">
+                        <div class="group-header">
+                            <span class="group-icon">💼</span>
+                            <span class="group-name">LinkedIn</span>
+                            <span class="group-count">2 sizes</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="li-post" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Post</span>
+                                    <span class="size-dims">1200 × 627</span>
+                                </span>
+                                <span class="size-preview landscape"></span>
+                            </label>
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="li-banner" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Background Banner</span>
+                                    <span class="size-dims">1584 × 396</span>
+                                </span>
+                                <span class="size-preview banner"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div class="platform-group" data-platform="whatsapp">
+                        <div class="group-header">
+                            <span class="group-icon">💬</span>
+                            <span class="group-name">WhatsApp</span>
+                            <span class="group-count">1 size</span>
+                        </div>
+                        <div class="group-sizes">
+                            <label class="size-option">
+                                <input type="checkbox" name="size" value="wa-dp" checked>
+                                <span class="size-info">
+                                    <span class="size-name">Profile Picture</span>
+                                    <span class="size-dims">500 × 500</span>
+                                </span>
+                                <span class="size-preview square"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="generate-section">
+                    <div class="selected-count">
+                        <span id="selectedCount">15</span> sizes selected
+                    </div>
+                    <button class="btn-generate" id="generateBtn">
+                        <span class="btn-text">⚡ Generate All Sizes</span>
+                        <span class="btn-loading" style="display: none;">
+                            <span class="spinner"></span> Processing...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden initially) -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="results-header">
+                <h2>🎉 Your Social Pack is Ready!</h2>
+                <p>All <span id="generatedCount">15</span> images generated successfully</p>
+            </div>
+
+            <!-- Download All Button -->
+            <div class="download-all-section">
+                <button class="btn-download-all" id="downloadAllBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download All as ZIP
+                </button>
+                <span class="zip-size" id="zipSize">~2.5 MB</span>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="results-grid" id="resultsGrid">
+                <!-- Generated dynamically -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="results-actions">
+                <button class="btn-start-over" id="startOverBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                    Start Over with New Image
+                </button>
+            </div>
+
+            <!-- Share Prompt -->
+            <div class="share-prompt">
+                <p>❤️ Love this tool? Share it with creators who need it!</p>
+                <div class="share-buttons">
+                    <a href="https://twitter.com/intent/tweet?text=Just%20discovered%20the%20best%20free%20tool%20for%20social%20media%20images!%20Upload%20once%2C%20get%2015%20perfectly%20sized%20images%20for%20ALL%20platforms.%20🔥&url=https://www.imgrunner.com/social-pack.html" target="_blank" class="share-btn twitter">
+                        Share on 𝕏
+                    </a>
+                    <button class="share-btn copy" id="copyLinkBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Made with ❤️ for creators worldwide</p>
+            <p class="footer-tagline">Unlimited. Forever. No Sign-up. No BS.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage">Link copied!</span>
+    </div>
+
+    <!-- JSZip for ZIP download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="js/social-pack.js"></script>
+</body>
+</html>
