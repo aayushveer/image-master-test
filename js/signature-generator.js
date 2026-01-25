@@ -22,6 +22,7 @@ class SignatureGeneratorPro {
         this.lastX = 0;
         this.lastY = 0;
         this.drawPoints = [];
+        this.currentStroke = [];
         this.strokeWidth = 3;
         this.smoothing = 5;
         
@@ -194,35 +195,30 @@ class SignatureGeneratorPro {
             tab.classList.toggle('active', tab.dataset.mode === mode);
         });
 
-        // Update sections
-        document.querySelectorAll('.type-section, .draw-section, .initials-section').forEach(section => {
-            section.classList.remove('active-section');
-        });
+        // Hide all mode sections first
+        document.getElementById('typeSection').style.display = 'none';
+        document.getElementById('drawSection').style.display = 'none';
+        document.getElementById('initialsSection').style.display = 'none';
 
-        const sectionId = mode === 'type' ? 'typeSection' : mode === 'draw' ? 'drawSection' : 'initialsSection';
-        document.getElementById(sectionId).classList.add('active-section');
-
-        // Show/hide relevant sections based on mode
-        if (mode === 'draw') {
-            // Show customize section for draw mode
+        // Show selected section
+        if (mode === 'type') {
+            document.getElementById('typeSection').style.display = 'block';
+            document.getElementById('customizeSection').style.display = this.userName ? 'block' : 'none';
+            if (this.userName) this.showSections();
+        } else if (mode === 'draw') {
+            document.getElementById('drawSection').style.display = 'block';
             document.getElementById('customizeSection').style.display = 'block';
             // Resize canvas to fit container
-            this.resizeDrawCanvas();
+            setTimeout(() => this.resizeDrawCanvas(), 50);
             // Show preview if already drew something
             if (this.drawPoints.length > 0) {
                 document.getElementById('previewSection').style.display = 'block';
                 document.getElementById('downloadSection').style.display = 'block';
             }
         } else if (mode === 'initials') {
+            document.getElementById('initialsSection').style.display = 'block';
             document.getElementById('customizeSection').style.display = this.userInitials ? 'block' : 'none';
-            if (this.userInitials) {
-                this.showSections();
-            }
-        } else {
-            document.getElementById('customizeSection').style.display = this.userName ? 'block' : 'none';
-            if (this.userName) {
-                this.showSections();
-            }
+            if (this.userInitials) this.showSections();
         }
     }
 
@@ -230,8 +226,12 @@ class SignatureGeneratorPro {
         const container = document.querySelector('.canvas-container');
         if (container && this.drawCanvas) {
             const rect = container.getBoundingClientRect();
-            this.drawCanvas.width = Math.min(700, rect.width - 4);
+            // Set canvas size to match container exactly
+            this.drawCanvas.width = rect.width;
             this.drawCanvas.height = 250;
+            // Set CSS size to match
+            this.drawCanvas.style.width = rect.width + 'px';
+            this.drawCanvas.style.height = '250px';
             // Update context settings
             this.drawCtx.strokeStyle = this.signatureColor;
             this.drawCtx.lineWidth = this.strokeWidth;
@@ -332,11 +332,19 @@ class SignatureGeneratorPro {
     startDrawing(e) {
         this.isDrawing = true;
         const rect = this.drawCanvas.getBoundingClientRect();
-        const scaleX = this.drawCanvas.width / rect.width;
-        const scaleY = this.drawCanvas.height / rect.height;
-        this.lastX = (e.clientX - rect.left) * scaleX;
-        this.lastY = (e.clientY - rect.top) * scaleY;
-        this.drawPoints = [{ x: this.lastX, y: this.lastY }];
+        // Direct coordinate mapping - no scaling needed when canvas size matches CSS size
+        this.lastX = e.clientX - rect.left;
+        this.lastY = e.clientY - rect.top;
+        this.drawPoints = [];
+        this.currentStroke = [{ x: this.lastX, y: this.lastY }];
+
+        // Start path
+        this.drawCtx.beginPath();
+        this.drawCtx.moveTo(this.lastX, this.lastY);
+        this.drawCtx.strokeStyle = this.signatureColor;
+        this.drawCtx.lineWidth = this.strokeWidth;
+        this.drawCtx.lineCap = 'round';
+        this.drawCtx.lineJoin = 'round';
 
         // Hide placeholder
         document.getElementById('canvasPlaceholder').classList.add('hidden');
@@ -346,34 +354,16 @@ class SignatureGeneratorPro {
         if (!this.isDrawing) return;
 
         const rect = this.drawCanvas.getBoundingClientRect();
-        const scaleX = this.drawCanvas.width / rect.width;
-        const scaleY = this.drawCanvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
-        this.drawPoints.push({ x, y });
+        this.currentStroke.push({ x, y });
 
-        this.drawCtx.strokeStyle = this.signatureColor;
-        this.drawCtx.lineWidth = this.strokeWidth;
-        
-        // Smooth line drawing
-        if (this.drawPoints.length > 2) {
-            const p1 = this.drawPoints[this.drawPoints.length - 3];
-            const p2 = this.drawPoints[this.drawPoints.length - 2];
-            const p3 = this.drawPoints[this.drawPoints.length - 1];
-            
-            this.drawCtx.beginPath();
-            this.drawCtx.moveTo(p1.x, p1.y);
-            
-            // Calculate control points for smooth curve
-            const cp1x = p1.x + (p2.x - p1.x) * 0.5;
-            const cp1y = p1.y + (p2.y - p1.y) * 0.5;
-            const cp2x = p2.x + (p3.x - p2.x) * 0.5;
-            const cp2y = p2.y + (p3.y - p2.y) * 0.5;
-            
-            this.drawCtx.quadraticCurveTo(p2.x, p2.y, cp2x, cp2y);
-            this.drawCtx.stroke();
-        }
+        // Smooth bezier curve drawing
+        this.drawCtx.lineTo(x, y);
+        this.drawCtx.stroke();
+        this.drawCtx.beginPath();
+        this.drawCtx.moveTo(x, y);
 
         this.lastX = x;
         this.lastY = y;
@@ -382,6 +372,11 @@ class SignatureGeneratorPro {
     stopDrawing() {
         if (this.isDrawing) {
             this.isDrawing = false;
+            this.drawCtx.closePath();
+            // Save stroke points for preview
+            if (this.currentStroke && this.currentStroke.length > 1) {
+                this.drawPoints = this.drawPoints.concat(this.currentStroke);
+            }
             this.showSections();
             this.updateDrawPreview();
         }

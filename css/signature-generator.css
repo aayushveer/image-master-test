@@ -155,17 +155,9 @@ body {
 .mode-tab svg { width: 20px; height: 20px; }
 
 /* Mode Sections - Type, Draw, Initials */
-.type-section,
-.draw-section,
-.initials-section {
-    display: none;
-}
-
-.type-section.active-section,
-.draw-section.active-section,
-.initials-section.active-section {
-    display: block;
-}
+.type-section { display: block; }
+.draw-section { display: none; }
+.initials-section { display: none; }
 
 /* Input Box */
 .input-box {
@@ -326,9 +318,8 @@ body {
 
 .canvas-container canvas {
     display: block;
-    width: 100%;
-    height: 250px;
-    cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%232563eb" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="9" cy="9" r="0.5"/></svg>') 0 24, crosshair;
+    background: white;
+    cursor: crosshair;
 }
 
 .canvas-placeholder {
