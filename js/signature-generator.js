@@ -21,8 +21,7 @@ class SignatureGeneratorPro {
         this.drawCtx = null;
         this.lastX = 0;
         this.lastY = 0;
-        this.drawPoints = [];
-        this.currentStroke = [];
+        this.hasDrawn = false;
         this.strokeWidth = 3;
         this.smoothing = 5;
         
@@ -335,8 +334,7 @@ class SignatureGeneratorPro {
         // Direct coordinate mapping - no scaling needed when canvas size matches CSS size
         this.lastX = e.clientX - rect.left;
         this.lastY = e.clientY - rect.top;
-        this.drawPoints = [];
-        this.currentStroke = [{ x: this.lastX, y: this.lastY }];
+        this.hasDrawn = true;
 
         // Start path
         this.drawCtx.beginPath();
@@ -373,10 +371,6 @@ class SignatureGeneratorPro {
         if (this.isDrawing) {
             this.isDrawing = false;
             this.drawCtx.closePath();
-            // Save stroke points for preview
-            if (this.currentStroke && this.currentStroke.length > 1) {
-                this.drawPoints = this.drawPoints.concat(this.currentStroke);
-            }
             this.showSections();
             this.updateDrawPreview();
         }
@@ -384,7 +378,7 @@ class SignatureGeneratorPro {
 
     clearDrawCanvas() {
         this.drawCtx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
-        this.drawPoints = [];
+        this.hasDrawn = false;
         document.getElementById('canvasPlaceholder').classList.remove('hidden');
         
         // Hide sections if no signature
@@ -394,7 +388,7 @@ class SignatureGeneratorPro {
 
     showSections() {
         const hasContent = (this.mode === 'type' && this.userName) ||
-                          (this.mode === 'draw' && this.drawPoints.length > 0) ||
+                          (this.mode === 'draw' && this.hasDrawn) ||
                           (this.mode === 'initials' && this.userInitials);
 
         document.getElementById('customizeSection').style.display = hasContent ? 'block' : 'none';
@@ -595,7 +589,7 @@ class SignatureGeneratorPro {
     }
 
     updateDrawPreview() {
-        if (this.drawPoints.length < 2) return;
+        if (!this.hasDrawn) return;
 
         const previewCanvas = document.getElementById('previewCanvas');
         const previewCtx = previewCanvas.getContext('2d');
@@ -604,35 +598,20 @@ class SignatureGeneratorPro {
         previewCanvas.width = size.width;
         previewCanvas.height = size.height;
 
-        // Calculate bounds of drawn signature
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        this.drawPoints.forEach(p => {
-            minX = Math.min(minX, p.x);
-            minY = Math.min(minY, p.y);
-            maxX = Math.max(maxX, p.x);
-            maxY = Math.max(maxY, p.y);
-        });
+        // Copy the draw canvas to preview, scaled to fit
+        const srcCanvas = this.drawCanvas;
+        const srcWidth = srcCanvas.width;
+        const srcHeight = srcCanvas.height;
+        
+        // Calculate scale to fit in preview while maintaining aspect ratio
+        const scale = Math.min((size.width * 0.9) / srcWidth, (size.height * 0.9) / srcHeight);
+        const scaledWidth = srcWidth * scale;
+        const scaledHeight = srcHeight * scale;
+        const offsetX = (size.width - scaledWidth) / 2;
+        const offsetY = (size.height - scaledHeight) / 2;
 
-        const drawWidth = maxX - minX;
-        const drawHeight = maxY - minY;
-        const scale = Math.min((size.width * 0.8) / drawWidth, (size.height * 0.8) / drawHeight);
-        const offsetX = (size.width - drawWidth * scale) / 2 - minX * scale;
-        const offsetY = (size.height - drawHeight * scale) / 2 - minY * scale;
-
-        // Draw scaled signature
-        previewCtx.strokeStyle = this.signatureColor;
-        previewCtx.lineWidth = this.strokeWidth * this.thicknessMultiplier[this.strokeThickness] * scale;
-        previewCtx.lineCap = 'round';
-        previewCtx.lineJoin = 'round';
-
-        previewCtx.beginPath();
-        this.drawPoints.forEach((p, i) => {
-            const x = p.x * scale + offsetX;
-            const y = p.y * scale + offsetY;
-            if (i === 0) previewCtx.moveTo(x, y);
-            else previewCtx.lineTo(x, y);
-        });
-        previewCtx.stroke();
+        // Draw the canvas content scaled to preview
+        previewCtx.drawImage(srcCanvas, 0, 0, srcWidth, srcHeight, offsetX, offsetY, scaledWidth, scaledHeight);
 
         document.getElementById('dimensionBadge').textContent = `${size.width} × ${size.height} px`;
     }
